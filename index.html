@@ -31,6 +31,7 @@
         .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto; }
 
         .card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s ease; cursor: pointer; border: 1px solid #eaeaea; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-color: var(--secondary-color); }
         .card-img-placeholder { width: 100%; height: 180px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .card-content { padding: 20px; }
         .card-title { font-size: 20px; font-weight: 600; color: var(--primary-color); margin: 0 0 10px 0; font-family: 'Playfair Display', serif; }
@@ -118,25 +119,22 @@
             renderCatalog(inventoryData);
         });
 
-        function handleImgError(img, model, type) {
-            if (type === 'numbered') {
-                // Si falla Model-1.jpg, intenta Model.jpg
-                img.onerror = () => { img.onerror = null; img.src = 'comodin.jpg'; };
-                img.src = model + '.jpg';
-            } else {
-                img.src = 'comodin.jpg';
-            }
+        // FUNCIÓN MEJORADA: Fuerza mayúsculas y tiene fallback a comodin.jpg
+        function handleImgError(img) {
+            img.onerror = null;
+            img.src = 'comodin.jpg';
         }
 
         function renderCatalog(data) {
             const catalog = document.getElementById('catalog');
             document.getElementById('stats-bar').innerText = `Mostrando ${data.length} unidades disponibles`;
             catalog.innerHTML = data.map(item => {
-                const cleanModel = item.model.replace(/\s+/g, '');
+                // Forzamos MAYÚSCULAS y quitamos espacios para coincidir con GitHub
+                const modelName = item.model.replace(/\s+/g, '').toUpperCase();
                 return `
                 <div class="card" onclick="openModal('${item.unidad}')">
                     <div class="card-img-placeholder">
-                        <img src="${cleanModel}-1.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${cleanModel}', 'numbered')">
+                        <img src="${modelName}-1.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this)">
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">Unidad ${item.unidad}</h3>
@@ -151,7 +149,7 @@
             const item = inventoryData.find(i => i.unidad === unidadId);
             selectedTorre = item.torre;
             listPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
-            const cleanModel = item.model.replace(/\s+/g, '');
+            const modelName = item.model.replace(/\s+/g, '').toUpperCase();
 
             document.getElementById('modal-title').innerText = `Unidad ${item.unidad}`;
             document.getElementById('unit-info-basic').innerHTML = `
@@ -164,9 +162,9 @@
             const carousel = document.getElementById('carousel-images');
             carousel.innerHTML = `
                 <button class="carousel-btn" style="left:0" onclick="changeSlide(-1)">&#10094;</button>
-                <img class="slide-img active" src="${cleanModel}-1.jpg" onerror="handleImgError(this, '${cleanModel}', 'numbered')">
-                <img class="slide-img" src="${cleanModel}-2.jpg" onerror="this.style.display='none'">
-                <img class="slide-img" src="${cleanModel}-3.jpg" onerror="this.style.display='none'">
+                <img class="slide-img active" src="${modelName}-1.jpg" onerror="handleImgError(this)">
+                <img class="slide-img" src="${modelName}-2.jpg" onerror="this.style.display='none'">
+                <img class="slide-img" src="${modelName}-3.jpg" onerror="this.style.display='none'">
                 <button class="carousel-btn" style="right:0" onclick="changeSlide(1)">&#10095;</button>`;
 
             currentSlideIndex = 0;
@@ -176,6 +174,7 @@
 
         function changeSlide(n) {
             const slides = document.querySelectorAll('.slide-img');
+            if (slides.length === 0) return;
             slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = (currentSlideIndex + n + slides.length) % slides.length;
             slides[currentSlideIndex].classList.add('active');
@@ -183,7 +182,7 @@
 
         function calculatePlan(downP, constrP, deliveryP, discount, label) {
             const finalPrice = listPrice * (1 - discount);
-            const months = selectedTorre === 'A' ? 31 : 43; // Mayo 2026 a Dic 2028/2029
+            const months = selectedTorre === 'A' ? 31 : 43; 
             
             document.getElementById('plan-label').innerText = label;
             document.getElementById('res-down').innerText = formatCurrency(finalPrice * downP);
