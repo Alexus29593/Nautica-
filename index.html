@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - Nautica Residences by Nauma</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --primary-color: #0A192F;
+            --secondary-color: #C5A880;
+            --bg-color: #F8F9FA;
+            --text-color: #333333;
+            --card-bg: #FFFFFF;
+            --accent-color: #2D4A63;
+            --danger-color: #d9534f;
+        }
+
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; box-sizing: border-box; }
+        header { background-color: var(--primary-color); color: white; padding: 20px 40px; text-align: center; border-bottom: 4px solid var(--secondary-color); }
+        header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 2px; margin: 0; font-size: 28px; }
+        header p { font-size: 12px; letter-spacing: 4px; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; }
+
+        .filters { display: flex; justify-content: center; gap: 20px; padding: 20px; background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        .filter-group { display: flex; flex-direction: column; font-size: 14px; }
+        .filter-group label { font-weight: 600; color: var(--primary-color); margin-bottom: 5px; }
+        .filter-group select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; min-width: 150px; outline: none; }
+
+        .stats-bar { text-align: center; padding: 15px; background: #eef2f5; font-weight: 600; color: var(--primary-color); }
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+        .card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s ease; cursor: pointer; border: 1px solid #eaeaea; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-color: var(--secondary-color); }
+        .card-img-placeholder { width: 100%; height: 180px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-content { padding: 20px; }
+        .card-title { font-size: 20px; font-weight: 600; color: var(--primary-color); margin: 0 0 10px 0; font-family: 'Playfair Display', serif; }
+        .card-details { font-size: 13px; line-height: 1.5; }
+        .card-details span { font-weight: 600; color: var(--primary-color); }
+        .card-price { margin-top: 15px; font-size: 16px; font-weight: 600; color: var(--secondary-color); }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(10, 25, 47, 0.95); overflow-y: auto; }
+        .modal-content { background-color: var(--bg-color); margin: 2% auto; border-radius: 8px; max-width: 1000px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 20; }
+        .modal-body { display: flex; flex-wrap: wrap; }
+
+        /* Carrusel Styles */
+        .carousel-container { flex: 1 1 550px; position: relative; background-color: #000; min-height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .slide-img { max-width: 100%; max-height: 450px; display: none; border-radius: 4px; margin: auto; }
+        .slide-img.active { display: block; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 15; transition: 0.3s; }
+        .carousel-btn:hover { background: var(--secondary-color); }
+        .prev-btn { left: 0; border-radius: 0 4px 4px 0; }
+        .next-btn { right: 0; border-radius: 4px 0 0 4px; }
+
+        /* Contenido Info */
+        .info-container { flex: 1 1 350px; padding: 30px; background: white; }
+        .info-container h2 { font-family: 'Playfair Display', serif; color: var(--primary-color); margin-top: 0; font-size: 24px; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; }
+
+        .calculator-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #ccc; }
+        .calculator-title { font-weight: 600; color: var(--primary-color); margin-bottom: 12px; font-size: 13px; text-transform: uppercase; }
+        .plan-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .btn-plan { background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: 0.3s; line-height: 1.2; font-weight: 600; }
+        .btn-plan:hover { background: var(--secondary-color); }
+
+        .calc-result { background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e1e8ed; display: none; }
+        .res-header { font-weight: 600; margin-bottom: 10px; color: var(--secondary-color); font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+        .row-total { margin-top: 8px; font-weight: 700; border-top: 1px solid #ccc; padding-top: 8px; color: var(--primary-color); }
+        .discount-badge { color: var(--danger-color); font-weight: 700; }
+        .delivery-note { font-size: 11px; color: #666; font-style: italic; margin-top: 8px; display: block; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 15px; }
+        .info-item { font-size: 13px; padding: 6px 10px; background: var(--bg-color); border-radius: 4px; border-left: 4px solid var(--secondary-color); }
+        .info-item strong { color: var(--primary-color); display: inline-block; width: 110px; }
+
+        @media (max-width: 768px) { .carousel-container { min-height: 250px; } .slide-img { max-height: 250px; } .plan-buttons { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NAUTICA RESIDENCES</h1>
+        <p>by NAUMA • Hotel Living</p>
+    </header>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="filter-torre">Torre</label>
+            <select id="filter-torre"><option value="all">Todas</option><option value="A">Torre A</option><option value="B">Torre B</option></select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-recamara">Recámaras</label>
+            <select id="filter-recamara"><option value="all">Todas</option><option value="1">1 Recámara</option><option value="2">2 Recámaras</option><option value="3">3 Recámaras</option></select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-vista">Vista</label>
+            <select id="filter-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de Ciudad</option></select>
+        </div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">Cargando inventario...</div>
+    <div class="catalog-grid" id="catalog"></div>
+
+    <div id="unitModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="carousel-container" id="carousel-images">
+                    <!-- Las imágenes inyectadas dinámicamente -->
+                </div>
+                <div class="info-container">
+                    <h2 id="modal-title">Unidad</h2>
+                    <div class="info-grid">
+                        <div class="info-item"><strong>Torre:</strong> <span id="modal-torre"></span></div>
+                        <div class="info-item"><strong>Entrega:</strong> <span id="modal-delivery-date" style="color:var(--secondary-color); font-weight:600;"></span></div>
+                        <div class="info-item"><strong>Modelo:</strong> <span id="modal-model"></span></div>
+                        <div class="info-item"><strong>M2 Totales:</strong> <span id="modal-m2"></span></div>
+                        <div class="info-item"><strong>Precio Lista:</strong> <span id="modal-price" style="font-weight:bold;"></span></div>
+                    </div>
+
+                    <div class="calculator-section" id="calc-section">
+                        <div class="calculator-title">Simulador de Pagos</div>
+                        <div class="plan-buttons">
+                            <button class="btn-plan" onclick="calculatePlan(0.30, 0, 0.70, 0, 'Plan 30% / 70%')">30% Enganche<br>70% Entrega</button>
+                            <button class="btn-plan" onclick="calculatePlan(0.30, 0.40, 0.30, 0.04, 'Plan 30% / 40% / 30%')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
+                            <button class="btn-plan" onclick="calculatePlan(0.50, 0.30, 0.20, 0.07, 'Plan 50% / 30% / 20%')">50% Eng / 30% Obra<br>20% Ent (7% Desc)</button>
+                            <button class="btn-plan" onclick="calculatePlan(0.80, 0, 0.20, 0.12, 'Plan 80% / 20%')">80% Enganche<br>20% Ent (12% Desc)</button>
+                        </div>
+
+                        <div class="calc-result" id="calc-result">
+                            <div class="res-header" id="plan-label">Plan Seleccionado</div>
+                            <div class="result-row"><span>Precio de Lista:</span><span id="res-list-price"></span></div>
+                            <div class="result-row" id="row-discount" style="display:none;"><span>Descuento aplicado:</span><span class="discount-badge" id="res-discount-val"></span></div>
+                            <div class="result-row"><span>Enganche Inicial:</span><span id="res-down" style="font-weight:600;"></span></div>
+                            
+                            <div id="const-block" style="display:none; background: #eef2f5; padding: 10px; border-radius: 4px; margin: 8px 0; border-left: 3px solid var(--accent-color);">
+                                <div class="result-row"><span>Total en Construcción:</span><span id="res-const"></span></div>
+                                <div class="result-row" style="color: var(--accent-color); margin-top: 4px;">
+                                    <span id="res-months-label">Mensualidades:</span>
+                                    <span id="res-monthly-pay" style="font-weight:700;"></span>
+                                </div>
+                            </div>
+
+                            <div class="result-row"><span>Saldo Final a la Entrega:</span><span id="res-delivery"></span></div>
+                            <div class="result-row row-total"><span>INVERSIÓN FINAL:</span><span id="res-final-total"></span></div>
+                            <small class="delivery-note" id="delivery-info"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
+        let inventoryData = [];
+        let listPrice = 0;
+        let selectedTorre = "";
+        let currentSlideIndex = 0;
+
+        fetch(sheetUrl).then(res => res.text()).then(data => {
+            const lines = data.trim().split('\n');
+            inventoryData = lines.slice(1).map(line => {
+                const c = line.split('\t');
+                return {
+                    torre: c[0].replace('TORRE ', '').trim(),
+                    unidad: c[1].trim(),
+                    recamaras: c[2].trim(),
+                    model: c[4].trim(),
+                    m2: c[5].trim(),
+                    view: c[6].trim(),
+                    price: c[8].trim() || 'Consultar',
+                    disponibilidad: c[9].trim().toUpperCase()
+                };
+            }).filter(item => item.disponibilidad !== 'NO');
+            renderCatalog(inventoryData);
+        });
+
+        function getRemainingMonths(torre) {
+            const now = new Date(2026, 4); 
+            const deliveryDate = (torre === "A") ? new Date(2028, 11) : new Date(2029, 11);
+            return (deliveryDate.getFullYear() - now.getFullYear()) * 12 + (deliveryDate.getMonth() - now.getMonth());
+        }
+
+        // NUEVA FUNCIÓN: Manejo inteligente de errores de imagen
+        function handleImgFallback(img) {
+            if (img.src.includes('comodin.jpg')) {
+                // Si ya intentó cargar el comodín y falló, oculta la imagen rota por completo.
+                img.style.display = 'none';
+            } else {
+                // Si falla la foto original, intenta cargar el comodín
+                img.src = 'imagenes_nautica/comodin.jpg';
+            }
+        }
+
+        function renderCatalog(data) {
+            const catalog = document.getElementById('catalog');
+            document.getElementById('stats-bar').innerText = `Mostrando ${data.length} unidades disponibles`;
+            catalog.innerHTML = data.map(item => {
+                const cleanModel = item.model.replace(/\s+/g, '');
+                return `
+                <div class="card" onclick="openModal('${item.unidad}')">
+                    <div class="card-img-placeholder">
+                        <img src="imagenes_nautica/${cleanModel}-1.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgFallback(this)">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Unidad ${item.unidad}</h3>
+                        <div class="card-details">
+                            <div><span>Torre:</span> ${item.torre} | <span>Área:</span> ${item.m2} m²</div>
+                        </div>
+                        <div class="card-price">${item.price}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openModal(unidadId) {
+            const item = inventoryData.find(i => i.unidad === unidadId);
+            selectedTorre = item.torre;
+            const deliveryLabel = (selectedTorre === "A") ? "Diciembre 2028" : "Diciembre 2029";
+            
+            document.getElementById('modal-title').innerText = `Unidad ${item.unidad}`;
+            document.getElementById('modal-torre').innerText = item.torre;
+            document.getElementById('modal-delivery-date').innerText = deliveryLabel;
+            document.getElementById('modal-model').innerText = item.model;
+            document.getElementById('modal-m2').innerText = item.m2 + ' m²';
+            document.getElementById('modal-price').innerText = item.price;
+
+            listPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+            document.getElementById('calc-section').style.display = listPrice > 0 ? 'block' : 'none';
+            document.getElementById('calc-result').style.display = 'none';
+
+            const cleanModel = item.model.replace(/\s+/g, ''); 
+            
+            // Inyectamos el carrusel utilizando la función de fallback seguro
+            document.getElementById('carousel-images').innerHTML = `
+                <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">&#10094;</button>
+                <img class="slide-img active" src="imagenes_nautica/${cleanModel}-1.jpg" onerror="handleImgFallback(this)">
+                <img class="slide-img" src="imagenes_nautica/${cleanModel}-2.jpg" onerror="handleImgFallback(this)">
+                <img class="slide-img" src="imagenes_nautica/${cleanModel}-3.jpg" onerror="handleImgFallback(this)">
+                <button class="carousel-btn next-btn" onclick="changeSlide(1)">&#10095;</button>
+            `;
+
+            currentSlideIndex = 0;
+            document.getElementById('unitModal').style.display = 'block';
+        }
+
+        // Funciones del Carrusel
+        function changeSlide(n) {
+            const slides = document.querySelectorAll('#carousel-images .slide-img');
+            if (slides.length === 0) return;
+            
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex += n;
+            
+            if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+            
+            slides[currentSlideIndex].classList.add('active');
+        }
+
+        function calculatePlan(downP, constrP, deliveryP, discount, label) {
+            const discountAmount = listPrice * discount;
+            const finalPrice = listPrice - discountAmount;
+            const months = getRemainingMonths(selectedTorre);
+            
+            document.getElementById('plan-label').innerText = label;
+            document.getElementById('res-list-price').innerText = formatCurrency(listPrice);
+            
+            if(discount > 0) {
+                document.getElementById('row-discount').style.display = 'flex';
+                const cleanDiscountPercent = Math.round(discount * 100);
+                document.getElementById('res-discount-val').innerText = `- ${formatCurrency(discountAmount)} (${cleanDiscountPercent}%)`;
+            } else {
+                document.getElementById('row-discount').style.display = 'none';
+            }
+
+            document.getElementById('res-down').innerText = formatCurrency(finalPrice * downP);
+            
+            if(constrP > 0) {
+                const totalConstruction = finalPrice * constrP;
+                const monthly = totalConstruction / months;
+                document.getElementById('const-block').style.display = 'block';
+                document.getElementById('res-const').innerText = formatCurrency(totalConstruction);
+                document.getElementById('res-months-label').innerText = `${months} meses restantes:`;
+                document.getElementById('res-monthly-pay').innerText = formatCurrency(monthly);
+            } else {
+                document.getElementById('const-block').style.display = 'none';
+            }
+
+            document.getElementById('res-delivery').innerText = formatCurrency(finalPrice * deliveryP);
+            document.getElementById('res-final-total').innerText = formatCurrency(finalPrice);
+            document.getElementById('delivery-info').innerText = `* Cálculo basado en entrega de Torre ${selectedTorre} (${(selectedTorre === "A") ? "Dic 2028" : "Dic 2029"}) considerando fecha actual Mayo 2026.`;
+            document.getElementById('calc-result').style.display = 'block';
+        }
+
+        function formatCurrency(n) { return '$ ' + n.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+        function closeModal() { document.getElementById('unitModal').style.display = 'none'; }
+        window.onclick = e => { if(e.target.className === 'modal') closeModal(); }
+
+        document.querySelectorAll('.filter-group select').forEach(sel => {
+            sel.addEventListener('change', () => {
+                const t = document.getElementById('filter-torre').value;
+                const r = document.getElementById('filter-recamara').value;
+                const v = document.getElementById('filter-vista').value.toLowerCase();
+                const filtered = inventoryData.filter(i => (t === 'all' || i.torre === t) && (r === 'all' || i.recamaras.includes(r)) && (v === 'all' || i.view.toLowerCase().includes(v)));
+                renderCatalog(filtered);
+            });
+        });
+    </script>
+</body>
+</html>
