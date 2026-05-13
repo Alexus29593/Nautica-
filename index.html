@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario - Nautica Residences by Nauma</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
         :root {
             --primary-color: #0A192F;
-            --secondary-color: #C5A880;
+            --secondary-color: #C5A880; /* Dorado de la imagen */
             --bg-color: #F8F9FA;
             --text-color: #333333;
             --card-bg: #FFFFFF;
-            --accent-color: #2D4A63;
-            --danger-color: #d9534f;
+            --accent-blue: #2D4A63;
+            --selected-blue: #0056b3;
+            --danger-red: #d9534f;
+            --obra-bg: #eef2f5;
+            --obra-text: #2D4A63;
         }
 
         body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,74 +25,108 @@
         header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 2px; margin: 0; font-size: 28px; }
         header p { font-size: 12px; letter-spacing: 4px; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; }
 
-        .filters { display: flex; justify-content: center; gap: 20px; padding: 20px; background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
-        .filter-group { display: flex; flex-direction: column; font-size: 14px; }
-        .filter-group label { font-weight: 600; color: var(--primary-color); margin-bottom: 5px; }
-        .filter-group select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; min-width: 150px; outline: none; }
+        /* Filtros */
+        .filters { display: flex; justify-content: center; gap: 30px; padding: 25px; background-color: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+        .filter-group { display: flex; flex-direction: column; min-width: 180px; }
+        .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
+        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; cursor: pointer; }
 
-        .stats-bar { text-align: center; padding: 15px; background: #eef2f5; font-weight: 600; color: var(--primary-color); }
+        /* Tablero de Ventas */
+        .stats-bar { padding: 20px; background: #eef2f5; color: var(--primary-color); font-size: 14px; text-align: center; }
+        .stats-main { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
+        .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .stat-item { background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #ddd; font-weight: 600; }
+
         .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto; }
-
         .card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s ease; cursor: pointer; border: 1px solid #eaeaea; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-color: var(--secondary-color); }
-        .card-img-placeholder { width: 100%; height: 180px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card:hover { transform: translateY(-5px); border-color: var(--secondary-color); }
+        .card-img-placeholder { width: 100%; height: 180px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; }
         .card-content { padding: 20px; }
-        .card-title { font-size: 20px; font-weight: 600; color: var(--primary-color); margin: 0 0 10px 0; font-family: 'Playfair Display', serif; }
-        .card-price { margin-top: 15px; font-size: 16px; font-weight: 600; color: var(--secondary-color); }
+        .card-title { font-size: 20px; font-weight: 600; color: var(--primary-color); margin: 0; font-family: 'Playfair Display', serif; }
+        .card-price { margin-top: 15px; font-size: 16px; font-weight: 700; color: var(--secondary-color); }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(10, 25, 47, 0.95); overflow-y: auto; }
-        .modal-content { background-color: var(--bg-color); margin: 2% auto; border-radius: 8px; max-width: 1000px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
-        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 20; }
-        .modal-body { display: flex; flex-wrap: wrap; }
-
-        .carousel-container { flex: 1 1 550px; position: relative; background-color: #000; min-height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .slide-img { max-width: 100%; max-height: 450px; display: none; border-radius: 4px; margin: auto; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); overflow-y: auto; }
+        .modal-content { background-color: white; margin: 2% auto; border-radius: 12px; max-width: 1100px; display: flex; flex-direction: row; overflow: hidden; position: relative; }
+        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 20; }
+        
+        .carousel-area { flex: 1.2; background-color: black; display: flex; align-items: center; justify-content: center; position: relative; min-height: 450px; }
+        .slide-img { max-width: 100%; max-height: 500px; display: none; }
         .slide-img.active { display: block; }
-        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 15; }
 
-        .info-container { flex: 1 1 350px; padding: 30px; background: white; }
-        .info-container h2 { font-family: 'Playfair Display', serif; color: var(--primary-color); font-size: 24px; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; }
+        .info-area { flex: 1; padding: 40px; background: white; overflow-y: auto; }
+        .sim-header { font-weight: 700; font-size: 14px; text-transform: uppercase; margin: 25px 0 15px; letter-spacing: 1px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-pago { border: none; padding: 12px; border-radius: 8px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; }
+        .btn-gold { background: var(--secondary-color); }
 
-        .btn-plan { background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; margin: 4px; }
-        .calc-result { background: #f8f9fa; padding: 15px; border-radius: 6px; display: none; margin-top: 10px; }
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+        /* Resultados estilo Captura de Pantalla */
+        .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
+        .res-plan-title { color: var(--secondary-color); font-size: 20px; font-weight: 600; margin-bottom: 20px; font-family: 'Montserrat'; }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 16px; color: #333; }
+        .res-discount { color: var(--danger-red); font-weight: 600; text-align: right; }
+        
+        /* Bloque Azulado de Obra */
+        .obra-block { background: var(--obra-bg); padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .obra-row-top { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 8px; }
+        .obra-row-bottom { display: flex; justify-content: space-between; font-size: 14px; color: var(--obra-text); align-items: center; }
+        .monthly-val { font-weight: 700; font-size: 18px; color: var(--obra-text); }
 
-        @media (max-width: 768px) { .carousel-container { min-height: 250px; } .slide-img { max-height: 250px; } }
+        .res-total-final { border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-weight: 700; font-size: 20px; }
+        .res-note { font-size: 12px; color: #666; font-style: italic; margin-top: 15px; }
+
+        @media (max-width: 900px) { .modal-content { flex-direction: column; } }
     </style>
 </head>
 <body>
 
     <header>
         <h1>NAUTICA RESIDENCES</h1>
-        <p>by NAUMA • Hotel Living</p>
+        <p>by NAUMA</p>
     </header>
 
-    <div class="stats-bar" id="stats-bar">Cargando inventario...</div>
+    <div class="filters">
+        <div class="filter-group"><label>Torre</label><select id="f-torre"><option value="all">Todas</option><option value="A">Torre A</option><option value="B">Torre B</option></select></div>
+        <div class="filter-group"><label>Recámaras</label><select id="f-recamaras"><option value="all">Todas</option><option value="1">1 Recámara</option><option value="2">2 Recámaras</option><option value="3">3 Recámaras</option></select></div>
+        <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">Calculando inventario...</div>
     <div class="catalog-grid" id="catalog"></div>
 
     <div id="unitModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div class="modal-body">
-                <div class="carousel-container" id="carousel-images"></div>
-                <div class="info-container">
-                    <h2 id="modal-title">Unidad</h2>
-                    <div id="unit-info-basic"></div>
-                    <div class="calculator-section" id="calc-section">
-                        <div style="font-weight:600; font-size:12px; margin:15px 0 10px;">PLANES DE PAGO</div>
-                        <button class="btn-plan" onclick="calculatePlan(0.30, 0, 0.70, 0, 'Plan 30/70')">30% Eng / 70% Ent</button>
-                        <button class="btn-plan" onclick="calculatePlan(0.30, 0.40, 0.30, 0.04, 'Plan 30/40/30 (4% Desc)')">30/40/30</button>
-                        <button class="btn-plan" onclick="calculatePlan(0.50, 0.30, 0.20, 0.07, 'Plan 50/30/20 (7% Desc)')">50/30/20</button>
-                        <button class="btn-plan" onclick="calculatePlan(0.80, 0, 0.20, 0.12, 'Plan 80/20 (12% Desc)')">80/20</button>
-                        
-                        <div class="calc-result" id="calc-result">
-                            <div id="plan-label" style="font-weight:700; color:var(--secondary-color); margin-bottom:10px;"></div>
-                            <div class="result-row"><span>Enganche:</span><span id="res-down"></span></div>
-                            <div class="result-row" id="row-const" style="display:none;"><span>Mensualidades:</span><span id="res-monthly"></span></div>
-                            <div class="result-row"><span>Entrega:</span><span id="res-delivery"></span></div>
-                            <div class="result-row" style="border-top:1px solid #ddd; padding-top:5px; font-weight:700;"><span>Total:</span><span id="res-total"></span></div>
+            <div class="carousel-area" id="carousel-images"></div>
+            <div class="info-area">
+                <h2 id="modal-title" style="font-family:'Playfair Display';">Unidad</h2>
+                <div id="m-data" style="font-size:14px; line-height:1.8; margin-bottom:20px;"></div>
+                <div class="sim-header">Simulador de Pagos</div>
+                <div class="btn-grid">
+                    <button class="btn-pago" onclick="runCalc(0.3, 0, 0.7, 0, 'Plan 30/70')">30% Enganche<br>70% Entrega</button>
+                    <button class="btn-pago btn-gold" onclick="runCalc(0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
+                    <button class="btn-pago" onclick="runCalc(0.5, 0.3, 0.2, 0.07, 'Plan 50/30/20')">50% Eng / 30% Obra<br>20% Ent (7% Desc)</button>
+                    <button class="btn-pago" onclick="runCalc(0.8, 0, 0.2, 0.12, 'Plan 80/20')">80% Enganche<br>20% Ent (12% Desc)</button>
+                </div>
+                
+                <div class="result-card" id="res-card">
+                    <div class="res-plan-title" id="res-plan-name"></div>
+                    <div class="res-row"><span>Precio de Lista:</span><span id="res-list"></span></div>
+                    <div class="res-row" id="row-desc" style="display:none;"><span>Ahorro (Descuento):</span><span class="res-discount" id="res-desc-val"></span></div>
+                    <div class="res-row"><span>Enganche Inicial:</span><span id="res-down"></span></div>
+                    
+                    <!-- BLOQUE DE OBRA ESTILO IMAGEN -->
+                    <div id="obra-block" class="obra-block" style="display:none;">
+                        <div class="obra-row-top"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
+                        <div class="obra-row-bottom">
+                            <span id="res-months-label">mensualidades de:</span>
+                            <span class="monthly-val" id="res-monthly-val"></span>
                         </div>
                     </div>
+
+                    <div class="res-row"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
+                    <div class="res-row res-total-final"><span>Costo Final:</span><span id="res-total"></span></div>
+                    <div class="res-note" id="res-note"></div>
                 </div>
             </div>
         </div>
@@ -97,110 +134,93 @@
 
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
-        let inventoryData = [];
-        let listPrice = 0;
-        let selectedTorre = "";
-        let currentSlideIndex = 0;
+        let inventory = [];
+        let curPrice = 0, curTorre = "";
 
-        fetch(sheetUrl).then(res => res.text()).then(data => {
+        fetch(sheetUrl).then(r => r.text()).then(data => {
             const lines = data.trim().split('\n');
-            inventoryData = lines.slice(1).map(line => {
-                const c = line.split('\t');
-                return {
-                    torre: c[0].replace('TORRE ', '').trim(),
-                    unidad: c[1].trim(),
-                    recamaras: c[2].trim(),
-                    model: c[4].trim(),
-                    m2: c[5].trim(),
-                    price: c[8].trim() || 'Consultar',
-                    disponibilidad: c[9].trim().toUpperCase()
-                };
-            }).filter(item => item.disponibilidad !== 'NO');
-            renderCatalog(inventoryData);
+            inventory = lines.slice(1).map(l => {
+                const c = l.split('\t');
+                return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
+            }).filter(i => i.disp !== 'NO');
+            updateStats();
         });
 
-        // FUNCIÓN MEJORADA: Fuerza mayúsculas y tiene fallback a comodin.jpg
-        function handleImgError(img) {
-            img.onerror = null;
-            img.src = 'comodin.jpg';
+        function updateStats() {
+            const availA = inventory.filter(i => i.t === 'A').length;
+            const availB = inventory.filter(i => i.t === 'B').length;
+            const soldA = 190 - availA; const soldB = 190 - availB;
+            document.getElementById('stats-bar').innerHTML = `
+                <span class="stats-main">Tablero de Disponibilidad Nautica</span>
+                <div class="stats-grid">
+                    <div class="stat-item">Ventas Torre A: ${soldA} (${((soldA/190)*100).toFixed(1)}%)</div>
+                    <div class="stat-item">Ventas Torre B: ${soldB} (${((soldB/190)*100).toFixed(1)}%)</div>
+                    <div class="stat-item" style="border-color:var(--secondary-color);">Disponibles: ${inventory.length} de 380</div>
+                </div>`;
         }
 
         function renderCatalog(data) {
-            const catalog = document.getElementById('catalog');
-            document.getElementById('stats-bar').innerText = `Mostrando ${data.length} unidades disponibles`;
-            catalog.innerHTML = data.map(item => {
-                // Forzamos MAYÚSCULAS y quitamos espacios para coincidir con GitHub
-                const modelName = item.model.replace(/\s+/g, '').toUpperCase();
-                return `
-                <div class="card" onclick="openModal('${item.unidad}')">
-                    <div class="card-img-placeholder">
-                        <img src="${modelName}-1.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this)">
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">Unidad ${item.unidad}</h3>
-                        <div style="font-size:12px; color:#666;">Torre ${item.torre} | ${item.m2} m²</div>
-                        <div class="card-price">${item.price}</div>
-                    </div>
-                </div>`;
-            }).join('');
+            const grid = document.getElementById('catalog');
+            grid.innerHTML = data.map(i => `
+                <div class="card" onclick="openModal('${i.u}')">
+                    <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='comodin.jpg'"></div>
+                    <div class="card-content"><h3 class="card-title">Unidad ${i.u}</h3><div style="font-size:12px; color:#666; margin-top:5px;">Torre ${i.t} | ${i.area} m²</div><div class="card-price">${i.p}</div></div>
+                </div>`).join('');
         }
 
-        function openModal(unidadId) {
-            const item = inventoryData.find(i => i.unidad === unidadId);
-            selectedTorre = item.torre;
-            listPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
-            const modelName = item.model.replace(/\s+/g, '').toUpperCase();
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
+            const t = document.getElementById('f-torre').value;
+            const r = document.getElementById('f-recamaras').value;
+            const v = document.getElementById('f-vista').value.toLowerCase();
+            const filtered = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
+            renderCatalog(filtered);
+        }));
 
-            document.getElementById('modal-title').innerText = `Unidad ${item.unidad}`;
-            document.getElementById('unit-info-basic').innerHTML = `
-                <div style="font-size:13px; line-height:1.8;">
-                    <strong>Torre:</strong> ${item.torre} | <strong>Modelo:</strong> ${item.model}<br>
-                    <strong>Entrega:</strong> ${item.torre === 'A' ? 'Dic 2028' : 'Dic 2029'}<br>
-                    <strong>Precio Lista:</strong> ${item.price}
-                </div>`;
-
-            const carousel = document.getElementById('carousel-images');
-            carousel.innerHTML = `
-                <button class="carousel-btn" style="left:0" onclick="changeSlide(-1)">&#10094;</button>
-                <img class="slide-img active" src="${modelName}-1.jpg" onerror="handleImgError(this)">
-                <img class="slide-img" src="${modelName}-2.jpg" onerror="this.style.display='none'">
-                <img class="slide-img" src="${modelName}-3.jpg" onerror="this.style.display='none'">
-                <button class="carousel-btn" style="right:0" onclick="changeSlide(1)">&#10095;</button>`;
-
-            currentSlideIndex = 0;
-            document.getElementById('calc-result').style.display = 'none';
+        function openModal(uId) {
+            const item = inventory.find(i => i.u === uId);
+            curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0;
+            curTorre = item.t;
+            document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
+            document.getElementById('m-data').innerHTML = `<strong>Torre:</strong> ${item.t}<br><strong>Entrega:</strong> ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><strong>Modelo:</strong> ${item.m}<br><strong>Superficie:</strong> ${item.area} m²<br><strong>Precio Lista:</strong> ${item.p}`;
+            const key = item.m.toUpperCase().replace(/\s+/g,'');
+            document.getElementById('carousel-images').innerHTML = `<img class="slide-img active" src="${key}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${key}-2.jpg" onerror="this.style.display='none'">`;
+            document.getElementById('res-card').style.display = 'none';
             document.getElementById('unitModal').style.display = 'block';
         }
 
-        function changeSlide(n) {
-            const slides = document.querySelectorAll('.slide-img');
-            if (slides.length === 0) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = (currentSlideIndex + n + slides.length) % slides.length;
-            slides[currentSlideIndex].classList.add('active');
+        function runCalc(d, c, e, ds, n) {
+            const savings = curPrice * ds;
+            const final = curPrice - savings;
+            const months = curTorre === 'A' ? 31 : 43;
+            
+            document.getElementById('res-plan-name').innerText = n;
+            document.getElementById('res-list').innerText = fmt(curPrice);
+            
+            if(ds > 0) {
+                document.getElementById('row-desc').style.display = 'flex';
+                // Redondeamos porcentaje para evitar decimales infinitos de la captura
+                const cleanDs = Math.round(ds * 100);
+                document.getElementById('res-desc-val').innerHTML = `- ${fmt(savings)}<br>(${cleanDs}.0%)`;
+            } else { document.getElementById('row-desc').style.display = 'none'; }
+
+            document.getElementById('res-down').innerText = fmt(final * d);
+            
+            const obraBlock = document.getElementById('obra-block');
+            if(c > 0) {
+                obraBlock.style.display = 'block';
+                document.getElementById('res-obra-total').innerText = fmt(final * c);
+                document.getElementById('res-months-label').innerText = `${months} mensualidades de:`;
+                document.getElementById('res-monthly-val').innerText = fmt((final * c) / months);
+            } else { obraBlock.style.display = 'none'; }
+
+            document.getElementById('res-delivery').innerText = fmt(final * e);
+            document.getElementById('res-total').innerText = fmt(final);
+            document.getElementById('res-note').innerText = `* Cálculo basado en entrega de Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}).`;
+            document.getElementById('res-card').style.display = 'block';
         }
 
-        function calculatePlan(downP, constrP, deliveryP, discount, label) {
-            const finalPrice = listPrice * (1 - discount);
-            const months = selectedTorre === 'A' ? 31 : 43; 
-            
-            document.getElementById('plan-label').innerText = label;
-            document.getElementById('res-down').innerText = formatCurrency(finalPrice * downP);
-            document.getElementById('res-delivery').innerText = formatCurrency(finalPrice * deliveryP);
-            document.getElementById('res-total').innerText = formatCurrency(finalPrice);
-            
-            const rowConst = document.getElementById('row-const');
-            if (constrP > 0) {
-                rowConst.style.display = 'flex';
-                document.getElementById('res-monthly').innerText = `${months} de ${formatCurrency((finalPrice * constrP) / months)}`;
-            } else { rowConst.style.display = 'none'; }
-            
-            document.getElementById('calc-result').style.display = 'block';
-        }
-
-        function formatCurrency(n) { return '$' + Math.round(n).toLocaleString(); }
+        function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
         function closeModal() { document.getElementById('unitModal').style.display = 'none'; }
-        window.onclick = e => { if(e.target.className === 'modal') closeModal(); }
     </script>
 </body>
 </html>
