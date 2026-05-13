@@ -9,18 +9,16 @@
 
         :root {
             --primary-color: #0A192F;
-            --secondary-color: #C5A880; /* Dorado de la imagen */
+            --secondary-color: #C5A880;
             --bg-color: #F8F9FA;
             --text-color: #333333;
             --card-bg: #FFFFFF;
             --accent-blue: #2D4A63;
-            --selected-blue: #0056b3;
             --danger-red: #d9534f;
             --obra-bg: #eef2f5;
-            --obra-text: #2D4A63;
         }
 
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
         header { background-color: var(--primary-color); color: white; padding: 20px 40px; text-align: center; border-bottom: 4px solid var(--secondary-color); }
         header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 2px; margin: 0; font-size: 28px; }
         header p { font-size: 12px; letter-spacing: 4px; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; }
@@ -29,9 +27,9 @@
         .filters { display: flex; justify-content: center; gap: 30px; padding: 25px; background-color: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
         .filter-group { display: flex; flex-direction: column; min-width: 180px; }
         .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
-        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; cursor: pointer; }
+        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; }
 
-        /* Tablero de Ventas */
+        /* Tablero */
         .stats-bar { padding: 20px; background: #eef2f5; color: var(--primary-color); font-size: 14px; text-align: center; }
         .stats-main { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
         .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
@@ -41,41 +39,33 @@
         .card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s ease; cursor: pointer; border: 1px solid #eaeaea; }
         .card:hover { transform: translateY(-5px); border-color: var(--secondary-color); }
         .card-img-placeholder { width: 100%; height: 180px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; }
-        .card-content { padding: 20px; }
-        .card-title { font-size: 20px; font-weight: 600; color: var(--primary-color); margin: 0; font-family: 'Playfair Display', serif; }
-        .card-price { margin-top: 15px; font-size: 16px; font-weight: 700; color: var(--secondary-color); }
 
-        /* Modal */
+        /* Modal y Carrusel */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); overflow-y: auto; }
         .modal-content { background-color: white; margin: 2% auto; border-radius: 12px; max-width: 1100px; display: flex; flex-direction: row; overflow: hidden; position: relative; }
-        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 20; }
-        
-        .carousel-area { flex: 1.2; background-color: black; display: flex; align-items: center; justify-content: center; position: relative; min-height: 450px; }
-        .slide-img { max-width: 100%; max-height: 500px; display: none; }
-        .slide-img.active { display: block; }
+        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 30; }
 
+        .carousel-area { flex: 1.2; background-color: black; display: flex; align-items: center; justify-content: center; position: relative; min-height: 450px; }
+        .slide-img { max-width: 100%; max-height: 500px; display: none; animation: fade 0.5s; }
+        .slide-img.active { display: block; }
+        @keyframes fade { from {opacity: .4} to {opacity: 1} }
+
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 20; transition: 0.3s; }
+        .nav-btn:hover { background: var(--secondary-color); }
+        .prev { left: 0; border-radius: 0 8px 8px 0; }
+        .next { right: 0; border-radius: 8px 0 0 8px; }
+
+        /* Info y Simulador */
         .info-area { flex: 1; padding: 40px; background: white; overflow-y: auto; }
-        .sim-header { font-weight: 700; font-size: 14px; text-transform: uppercase; margin: 25px 0 15px; letter-spacing: 1px; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn-pago { border: none; padding: 12px; border-radius: 8px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; }
         .btn-gold { background: var(--secondary-color); }
-
-        /* Resultados estilo Captura de Pantalla */
-        .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
-        .res-plan-title { color: var(--secondary-color); font-size: 20px; font-weight: 600; margin-bottom: 20px; font-family: 'Montserrat'; }
-        .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 16px; color: #333; }
-        .res-discount { color: var(--danger-red); font-weight: 600; text-align: right; }
         
-        /* Bloque Azulado de Obra */
+        .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
         .obra-block { background: var(--obra-bg); padding: 15px; border-radius: 8px; margin: 15px 0; }
-        .obra-row-top { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 8px; }
-        .obra-row-bottom { display: flex; justify-content: space-between; font-size: 14px; color: var(--obra-text); align-items: center; }
-        .monthly-val { font-weight: 700; font-size: 18px; color: var(--obra-text); }
-
         .res-total-final { border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-weight: 700; font-size: 20px; }
-        .res-note { font-size: 12px; color: #666; font-style: italic; margin-top: 15px; }
 
-        @media (max-width: 900px) { .modal-content { flex-direction: column; } }
+        @media (max-width: 900px) { .modal-content { flex-direction: column; } .carousel-area { min-height: 300px; } }
     </style>
 </head>
 <body>
@@ -97,11 +87,13 @@
     <div id="unitModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div class="carousel-area" id="carousel-images"></div>
+            <div class="carousel-area" id="carousel-images">
+                <!-- Botones inyectados aquí para que siempre funcionen -->
+            </div>
             <div class="info-area">
                 <h2 id="modal-title" style="font-family:'Playfair Display';">Unidad</h2>
                 <div id="m-data" style="font-size:14px; line-height:1.8; margin-bottom:20px;"></div>
-                <div class="sim-header">Simulador de Pagos</div>
+                <div style="font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;">Simulador de Pagos</div>
                 <div class="btn-grid">
                     <button class="btn-pago" onclick="runCalc(0.3, 0, 0.7, 0, 'Plan 30/70')">30% Enganche<br>70% Entrega</button>
                     <button class="btn-pago btn-gold" onclick="runCalc(0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
@@ -110,23 +102,22 @@
                 </div>
                 
                 <div class="result-card" id="res-card">
-                    <div class="res-plan-title" id="res-plan-name"></div>
-                    <div class="res-row"><span>Precio de Lista:</span><span id="res-list"></span></div>
-                    <div class="res-row" id="row-desc" style="display:none;"><span>Ahorro (Descuento):</span><span class="res-discount" id="res-desc-val"></span></div>
-                    <div class="res-row"><span>Enganche Inicial:</span><span id="res-down"></span></div>
+                    <div style="color:var(--secondary-color); font-size:20px; font-weight:600; margin-bottom:20px;" id="res-plan-name"></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Precio de Lista:</span><span id="res-list"></span></div>
+                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:12px; color:var(--danger-red); font-weight:600;"><span>Ahorro (Descuento):</span><span id="res-desc-val" style="text-align:right;"></span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Enganche Inicial:</span><span id="res-down"></span></div>
                     
-                    <!-- BLOQUE DE OBRA ESTILO IMAGEN -->
                     <div id="obra-block" class="obra-block" style="display:none;">
-                        <div class="obra-row-top"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
-                        <div class="obra-row-bottom">
-                            <span id="res-months-label">mensualidades de:</span>
-                            <span class="monthly-val" id="res-monthly-val"></span>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; color:var(--accent-blue);">
+                            <span style="font-size:14px;" id="res-months-label">mensualidades de:</span>
+                            <span style="font-weight:700; font-size:18px;" id="res-monthly-val"></span>
                         </div>
                     </div>
 
-                    <div class="res-row"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
-                    <div class="res-row res-total-final"><span>Costo Final:</span><span id="res-total"></span></div>
-                    <div class="res-note" id="res-note"></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
+                    <div class="res-total-final" style="display:flex; justify-content:space-between;"><span>Costo Final:</span><span id="res-total"></span></div>
+                    <div style="font-size:12px; color:#666; font-style:italic; margin-top:15px;" id="res-note"></div>
                 </div>
             </div>
         </div>
@@ -135,7 +126,7 @@
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
         let inventory = [];
-        let curPrice = 0, curTorre = "";
+        let curPrice = 0, curTorre = "", slideIdx = 0;
 
         fetch(sheetUrl).then(r => r.text()).then(data => {
             const lines = data.trim().split('\n');
@@ -180,27 +171,46 @@
             const item = inventory.find(i => i.u === uId);
             curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0;
             curTorre = item.t;
+            const modelKey = item.m.toUpperCase().replace(/\s+/g,'');
+            
             document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
             document.getElementById('m-data').innerHTML = `<strong>Torre:</strong> ${item.t}<br><strong>Entrega:</strong> ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><strong>Modelo:</strong> ${item.m}<br><strong>Superficie:</strong> ${item.area} m²<br><strong>Precio Lista:</strong> ${item.p}`;
-            const key = item.m.toUpperCase().replace(/\s+/g,'');
-            document.getElementById('carousel-images').innerHTML = `<img class="slide-img active" src="${key}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${key}-2.jpg" onerror="this.style.display='none'">`;
+            
+            // Inyectar Carrusel con Botones
+            document.getElementById('carousel-images').innerHTML = `
+                <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                <img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'">
+                <img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'">
+                <img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'">
+                <button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
+            
+            slideIdx = 0;
             document.getElementById('res-card').style.display = 'none';
             document.getElementById('unitModal').style.display = 'block';
+        }
+
+        function moveSlide(n) {
+            const slides = document.querySelectorAll('.slide-img');
+            const visibleSlides = Array.from(slides).filter(s => s.style.display !== 'none');
+            
+            if (visibleSlides.length <= 1) return; // No mover si solo hay una imagen
+
+            visibleSlides[slideIdx].classList.remove('active');
+            slideIdx = (slideIdx + n + visibleSlides.length) % visibleSlides.length;
+            visibleSlides[slideIdx].classList.add('active');
         }
 
         function runCalc(d, c, e, ds, n) {
             const savings = curPrice * ds;
             const final = curPrice - savings;
-            const months = curTorre === 'A' ? 31 : 43;
+            const months = curTorre === 'A' ? 31 : 43; // Mayo 2026 a Dic 2028/2029
             
             document.getElementById('res-plan-name').innerText = n;
             document.getElementById('res-list').innerText = fmt(curPrice);
             
             if(ds > 0) {
                 document.getElementById('row-desc').style.display = 'flex';
-                // Redondeamos porcentaje para evitar decimales infinitos de la captura
-                const cleanDs = Math.round(ds * 100);
-                document.getElementById('res-desc-val').innerHTML = `- ${fmt(savings)}<br>(${cleanDs}.0%)`;
+                document.getElementById('res-desc-val').innerHTML = `- ${fmt(savings)}<br>(${Math.round(ds * 100)}.0%)`;
             } else { document.getElementById('row-desc').style.display = 'none'; }
 
             document.getElementById('res-down').innerText = fmt(final * d);
@@ -215,7 +225,7 @@
 
             document.getElementById('res-delivery').innerText = fmt(final * e);
             document.getElementById('res-total').innerText = fmt(final);
-            document.getElementById('res-note').innerText = `* Cálculo basado en entrega de Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}).`;
+            document.getElementById('res-note').innerText = `* Cálculo basado en entrega de Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}) considerando fecha actual Mayo 2026.`;
             document.getElementById('res-card').style.display = 'block';
         }
 
