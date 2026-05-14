@@ -25,10 +25,19 @@
         header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 4px; margin: 0; font-size: 38px; text-transform: uppercase; }
         header p { font-size: 14px; letter-spacing: 6px; margin-top: 15px; color: var(--secondary-color); text-transform: uppercase; font-weight: 400; }
 
-        .filters { display: flex; justify-content: center; gap: 40px; padding: 40px 20px; background-color: white; flex-wrap: wrap; }
-        .filter-group { display: flex; flex-direction: column; min-width: 250px; }
-        .filter-group label { font-weight: 800; color: var(--primary-color); margin-bottom: 12px; font-size: 18px; }
-        .filter-group select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 16px; outline: none; cursor: pointer; color: #333; }
+        /* Contenedor de Filtros expandido de forma armónica */
+        .filters { display: flex; justify-content: center; gap: 40px; padding: 40px 20px; background-color: white; flex-wrap: wrap; align-items: flex-end; }
+        .filter-group { display: flex; flex-direction: column; min-width: 230px; }
+        .filter-group label { font-weight: 800; color: var(--primary-color); margin-bottom: 12px; font-size: 16px; }
+        .filter-group select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 15px; outline: none; cursor: pointer; color: #333; }
+
+        /* Estilos Barra de Rango de Precios */
+        .price-range { width: 100%; accent-color: var(--secondary-color); cursor: pointer; height: 6px; border-radius: 5px; background: #ddd; outline: none; margin-top: 10px; }
+        
+        /* Botones de Ordenamiento Menor/Mayor */
+        .sort-container { display: flex; gap: 10px; width: 100%; }
+        .btn-sort { flex: 1; padding: 14px; border: 1px solid #ccc; background: white; color: var(--primary-color); border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-sort:hover, .btn-sort.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         .stats-bar { padding: 40px 20px; background: #eef2f5; color: var(--primary-color); text-align: center; }
         .stats-main { font-size: 24px; font-weight: 800; display: block; margin-bottom: 25px; }
@@ -79,6 +88,19 @@
         <div class="filter-group"><label>Torre</label><select id="f-torre"><option value="all">Todas</option><option value="A">Torre A</option><option value="B">Torre B</option></select></div>
         <div class="filter-group"><label>Recámaras</label><select id="f-recamaras"><option value="all">Todas</option><option value="1">1 Recámara</option><option value="2">2 Recámaras</option><option value="3">3 Recámaras</option></select></div>
         <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
+        
+        <div class="filter-group">
+            <label>Precio Máx: <span id="price-display" style="color:var(--secondary-color);">Cargando...</span></label>
+            <input type="range" id="f-precio" class="price-range">
+        </div>
+
+        <div class="filter-group">
+            <label>Ordenar Por Precio</label>
+            <div class="sort-container">
+                <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
+                <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
+            </div>
+        </div>
     </div>
 
     <div class="stats-bar" id="stats-bar">Actualizando tablero...</div>
@@ -122,10 +144,8 @@
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
         let inventory = [], curPrice = 0, curTorre = "", slideIdx = 0, autoInterval;
-        
-        // Variables para Swipe
-        let touchstartX = 0;
-        let touchendX = 0;
+        let touchstartX = 0, touchendX = 0;
+        let activeSort = 'none'; // Puede ser 'low' o 'high'
 
         fetch(sheetUrl).then(r => r.text()).then(data => {
             const lines = data.trim().split('\n');
@@ -133,9 +153,31 @@
                 const c = l.split('\t');
                 return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
             }).filter(i => i.disp !== 'NO');
+            
+            setupPriceSlider();
             updateStats();
-            renderCatalog(inventory);
+            applyFiltersAndSort();
         });
+
+        // Configura el Rango basado en los datos del Sheet
+        function setupPriceSlider() {
+            const numericPrices = inventory.map(i => parseFloat(i.p.replace(/[^0-9.]/g, ''))).filter(p => !isNaN(p));
+            if (numericPrices.length > 0) {
+                const minPrice = Math.min(...numericPrices);
+                const maxPrice = Math.max(...numericPrices);
+                const slider = document.getElementById('f-precio');
+                
+                slider.min = minPrice;
+                slider.max = maxPrice;
+                slider.value = maxPrice;
+                document.getElementById('price-display').innerText = fmt(maxPrice);
+                
+                slider.addEventListener('input', function() {
+                    document.getElementById('price-display').innerText = fmt(this.value);
+                    applyFiltersAndSort();
+                });
+            }
+        }
 
         function updateStats() {
             const availA = inventory.filter(i => i.t === 'A').length, availB = inventory.filter(i => i.t === 'B').length;
@@ -162,6 +204,53 @@
                 </div>`).join('');
         }
 
+        // Manejador del estado de los botones de ordenamiento
+        function toggleSort(type) {
+            const btnLow = document.getElementById('sort-low');
+            const btnHigh = document.getElementById('sort-high');
+
+            if (activeSort === type) {
+                activeSort = 'none';
+                btnLow.classList.remove('active');
+                btnHigh.classList.remove('active');
+            } else {
+                activeSort = type;
+                if (type === 'low') {
+                    btnLow.classList.add('active');
+                    btnHigh.classList.remove('active');
+                } else {
+                    btnHigh.classList.add('active');
+                    btnLow.classList.remove('active');
+                }
+            }
+            applyFiltersAndSort();
+        }
+
+        // Lógica unificada de filtros y orden
+        function applyFiltersAndSort() {
+            const t = document.getElementById('f-torre').value;
+            const r = document.getElementById('f-recamaras').value;
+            const v = document.getElementById('f-vista').value.toLowerCase();
+            const maxPriceSelected = parseFloat(document.getElementById('f-precio').value) || Infinity;
+
+            let filtered = inventory.filter(i => {
+                const itemPrice = parseFloat(i.p.replace(/[^0-9.]/g, '')) || 0;
+                return (t === 'all' || i.t === t) && 
+                       (r === 'all' || i.r === r) && 
+                       (v === 'all' || i.v.toLowerCase().includes(v)) &&
+                       (itemPrice <= maxPriceSelected);
+            });
+
+            // Aplicar ordenamiento si está activo
+            if (activeSort === 'low') {
+                filtered.sort((a, b) => (parseFloat(a.p.replace(/[^0-9.]/g, '')) || 0) - (parseFloat(b.p.replace(/[^0-9.]/g, '')) || 0));
+            } else if (activeSort === 'high') {
+                filtered.sort((a, b) => (parseFloat(b.p.replace(/[^0-9.]/g, '')) || 0) - (parseFloat(a.p.replace(/[^0-9.]/g, '')) || 0));
+            }
+
+            renderCatalog(filtered);
+        }
+
         function openModal(uId) {
             const item = inventory.find(i => i.u === uId);
             curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0, curTorre = item.t;
@@ -173,16 +262,8 @@
             
             carousel.innerHTML = `<button class="nav-btn prev" onclick="manualMove(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="manualMove(1)">&#10095;</button>`;
             
-            // Lógica Swipe
-            carousel.addEventListener('touchstart', e => {
-                touchstartX = e.changedTouches[0].screenX;
-            }, {passive: true});
-
-            carousel.addEventListener('touchend', e => {
-                touchendX = e.changedTouches[0].screenX;
-                if (touchendX < touchstartX - 50) manualMove(1);
-                if (touchendX > touchstartX + 50) manualMove(-1);
-            }, {passive: true});
+            carousel.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+            carousel.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; if (touchendX < touchstartX - 50) manualMove(1); if (touchendX > touchstartX + 50) manualMove(-1); }, {passive: true});
 
             slideIdx = 0; startAutoCarousel();
             document.getElementById('res-card').style.display = 'none';
@@ -218,11 +299,8 @@
 
         function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
         function closeModal() { clearInterval(autoInterval); document.getElementById('unitModal').style.display = 'none'; }
-        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
-            const t = document.getElementById('f-torre').value, r = document.getElementById('f-recamaras').value, v = document.getElementById('f-vista').value.toLowerCase();
-            const f = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
-            renderCatalog(f);
-        }));
+        
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', applyFiltersAndSort));
     </script>
 </body>
 </html>
