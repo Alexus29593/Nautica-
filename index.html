@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario - Nautica Residences by Nauma</title>
-    <!-- Librería para Captura de Pantalla -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -25,18 +24,19 @@
         header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 2px; margin: 0; font-size: 28px; }
         header p { font-size: 12px; letter-spacing: 4px; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; }
 
-        /* Filtros y Estadísticas */
+        /* Filtros estilo image_bebb64.png */
         .filters { display: flex; justify-content: center; gap: 30px; padding: 25px; background-color: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
-        .filter-group { display: flex; flex-direction: column; min-width: 180px; }
-        .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
-        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; cursor: pointer; }
+        .filter-group { display: flex; flex-direction: column; min-width: 200px; }
+        .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 10px; font-size: 16px; }
+        .filter-group select { padding: 15px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 14px; outline: none; cursor: pointer; color: #333; }
 
+        /* Tablero de Ventas */
         .stats-bar { padding: 20px; background: #eef2f5; color: var(--primary-color); font-size: 14px; text-align: center; }
         .stats-main { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
         .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         .stat-item { background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #ddd; font-weight: 600; }
 
-        /* Grid de Unidades */
+        /* Grid de Unidades estilo image_bf9919.png */
         .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; padding: 40px; max-width: 1250px; margin: 0 auto; }
         .card { background-color: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: 0.3s ease; cursor: pointer; border: 1px solid #f0f0f0; }
         .card:hover { transform: translateY(-5px); border-color: var(--secondary-color); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
@@ -68,7 +68,6 @@
         .btn-pago { border: none; padding: 15px 10px; border-radius: 12px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; transition: 0.3s; }
         .btn-pago:hover, .btn-pago.active { background: var(--secondary-color); }
         
-        /* Botón de Captura */
         .btn-capture { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Montserrat', sans-serif; }
         .btn-capture:hover { background: var(--secondary-color); }
 
@@ -88,16 +87,39 @@
     </header>
 
     <div class="filters">
-        <div class="filter-group"><label>Torre</label><select id="f-torre"><option value="all">Todas</option><option value="A">Torre A</option><option value="B">Torre B</option></select></div>
-        <div class="filter-group"><label>Recámaras</label><select id="f-recamaras"><option value="all">Todas</option><option value="1">1 Recámara</option><option value="2">2 Recámaras</option><option value="3">3 Recámaras</option></select></div>
-        <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
+        <div class="filter-group">
+            <label>Torre</label>
+            <select id="f-torre">
+                <option value="all">Todas</option>
+                <option value="A">Torre A</option>
+                <option value="B">Torre B</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Recámaras</label>
+            <select id="f-recamaras">
+                <option value="all">Todas</option>
+                <option value="1">1 Recámara</option>
+                <option value="2">2 Recámaras</option>
+                <option value="3">3 Recámaras</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Vista</label>
+            <select id="f-vista">
+                <option value="all">Todas</option>
+                <option value="Exterior">Exterior</option>
+                <option value="Interior">Interior</option>
+                <option value="Laguna">Laguna</option>
+                <option value="Centro de ciudad">Centro de ciudad</option>
+            </select>
+        </div>
     </div>
 
-    <div class="stats-bar" id="stats-bar">Actualizando tablero de ventas...</div>
+    <div class="stats-bar" id="stats-bar">Calculando inventario...</div>
     
     <div class="catalog-grid" id="catalog"></div>
 
-    <!-- MODAL (Área de captura id='capture-area') -->
     <div id="unitModal" class="modal">
         <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -133,7 +155,6 @@
                     <div style="font-size:11px; color:#666; font-style:italic; margin-top:10px;" id="res-note"></div>
                 </div>
 
-                <!-- BOTÓN DE CAPTURA ACTUALIZADO -->
                 <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">
                     <span>📸 Capturar Ficha para WhatsApp</span>
                 </button>
@@ -153,13 +174,13 @@
                 return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
             }).filter(i => i.disp !== 'NO');
             updateStats();
-            renderCatalog(inventory); 
+            renderCatalog(inventory); // Despliega todas las unidades al abrir
         });
 
         function updateStats() {
             const availA = inventory.filter(i => i.t === 'A').length;
             const availB = inventory.filter(i => i.t === 'B').length;
-            const soldA = 190 - availA; const soldB = 190 - availB;
+            const soldA = 190 - availA; const soldB = 190 - availB; // Basado en 190 unidades por torre
             document.getElementById('stats-bar').innerHTML = `
                 <span class="stats-main">Tablero de Ventas Nautica</span>
                 <div class="stats-grid">
@@ -181,6 +202,15 @@
                     </div>
                 </div>`).join('');
         }
+
+        // Lógica de filtrado según image_bebb64.png
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
+            const t = document.getElementById('f-torre').value;
+            const r = document.getElementById('f-recamaras').value;
+            const v = document.getElementById('f-vista').value.toLowerCase();
+            const filtered = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
+            renderCatalog(filtered);
+        }));
 
         function openModal(uId) {
             const item = inventory.find(i => i.u === uId);
@@ -250,52 +280,28 @@
             document.getElementById('res-card').style.display = 'block';
         }
 
-        /* GENERAR CAPTURA DE IMAGEN (PNG) */
         async function generarCaptura() {
             const area = document.getElementById('capture-area');
             const btnCapture = document.getElementById('btn-screenshot');
             const btnClose = document.querySelector('.close');
             const navBtns = document.querySelectorAll('.nav-btn');
-
-            // Ocultar elementos de interfaz
             btnCapture.style.display = 'none';
             btnClose.style.display = 'none';
             navBtns.forEach(b => b.style.display = 'none');
-
-            // Crear el lienzo
-            const canvas = await html2canvas(area, { 
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: "#FFFFFF" 
-            });
-
-            // Convertir a imagen y descargar
+            const canvas = await html2canvas(area, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" });
             const imgData = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             const unidadNombre = document.getElementById('modal-title').innerText.replace(/\s+/g,'_');
             link.download = `Ficha_Nautica_${unidadNombre}.png`;
             link.href = imgData;
             link.click();
-
-            // Restaurar interfaz
             btnCapture.style.display = 'flex';
             btnClose.style.display = 'block';
             navBtns.forEach(b => b.style.display = 'block');
         }
 
         function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
-        function closeModal() { 
-            clearInterval(autoInterval);
-            document.getElementById('unitModal').style.display = 'none'; 
-        }
-
-        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
-            const t = document.getElementById('f-torre').value;
-            const r = document.getElementById('f-recamaras').value;
-            const v = document.getElementById('f-vista').value.toLowerCase();
-            const filtered = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
-            renderCatalog(filtered);
-        }));
+        function closeModal() { clearInterval(autoInterval); document.getElementById('unitModal').style.display = 'none'; }
     </script>
 </body>
 </html>
