@@ -9,12 +9,11 @@
 
         :root {
             --primary-color: #0A192F;
-            --secondary-color: #C5A880;
+            --secondary-color: #C5A880; /* Dorado */
             --bg-color: #F8F9FA;
             --text-color: #333333;
             --card-bg: #FFFFFF;
-            --accent-blue: #2D4A63;
-            --danger-red: #d9534f;
+            --accent-blue: #2D4A63; /* Azul base */
             --obra-bg: #eef2f5;
         }
 
@@ -27,9 +26,9 @@
         .filters { display: flex; justify-content: center; gap: 30px; padding: 25px; background-color: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
         .filter-group { display: flex; flex-direction: column; min-width: 180px; }
         .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
-        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; }
+        .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; cursor: pointer; }
 
-        /* Tablero */
+        /* Tablero de Estadísticas */
         .stats-bar { padding: 20px; background: #eef2f5; color: var(--primary-color); font-size: 14px; text-align: center; }
         .stats-main { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
         .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
@@ -50,7 +49,7 @@
         .slide-img.active { display: block; }
         @keyframes fade { from {opacity: .4} to {opacity: 1} }
 
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 20; transition: 0.3s; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 20; }
         .nav-btn:hover { background: var(--secondary-color); }
         .prev { left: 0; border-radius: 0 8px 8px 0; }
         .next { right: 0; border-radius: 8px 0 0 8px; }
@@ -58,8 +57,16 @@
         /* Info y Simulador */
         .info-area { flex: 1; padding: 40px; background: white; overflow-y: auto; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn-pago { border: none; padding: 12px; border-radius: 8px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; }
-        .btn-gold { background: var(--secondary-color); }
+        
+        /* Botones estilo image_c01177.png */
+        .btn-pago { 
+            border: none; padding: 15px 10px; border-radius: 12px; cursor: pointer; 
+            color: white; background: var(--accent-blue); font-weight: 700; 
+            font-size: 11px; transition: all 0.3s ease; line-height: 1.4;
+        }
+        .btn-pago:hover, .btn-pago.active { 
+            background: var(--secondary-color); 
+        }
         
         .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
         .obra-block { background: var(--obra-bg); padding: 15px; border-radius: 8px; margin: 15px 0; }
@@ -87,24 +94,22 @@
     <div id="unitModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div class="carousel-area" id="carousel-images">
-                <!-- Botones inyectados aquí para que siempre funcionen -->
-            </div>
+            <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
                 <h2 id="modal-title" style="font-family:'Playfair Display';">Unidad</h2>
                 <div id="m-data" style="font-size:14px; line-height:1.8; margin-bottom:20px;"></div>
-                <div style="font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;">Simulador de Pagos</div>
+                <div style="font-weight:700; font-size:16px; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Simulador de Pagos</div>
                 <div class="btn-grid">
-                    <button class="btn-pago" onclick="runCalc(0.3, 0, 0.7, 0, 'Plan 30/70')">30% Enganche<br>70% Entrega</button>
-                    <button class="btn-pago btn-gold" onclick="runCalc(0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
-                    <button class="btn-pago" onclick="runCalc(0.5, 0.3, 0.2, 0.07, 'Plan 50/30/20')">50% Eng / 30% Obra<br>20% Ent (7% Desc)</button>
-                    <button class="btn-pago" onclick="runCalc(0.8, 0, 0.2, 0.12, 'Plan 80/20')">80% Enganche<br>20% Ent (12% Desc)</button>
+                    <button class="btn-pago" onclick="runCalc(this, 0.3, 0, 0.7, 0, 'Plan 30% / 70%')">30% Enganche<br>70% Entrega</button>
+                    <button class="btn-pago" onclick="runCalc(this, 0.3, 0.4, 0.3, 0.04, 'Plan 30% / 40% / 30%')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
+                    <button class="btn-pago" onclick="runCalc(this, 0.5, 0.3, 0.2, 0.07, 'Plan 50% / 30% / 20%')">50% Eng / 30% Obra<br>20% Ent (7% Desc)</button>
+                    <button class="btn-pago" onclick="runCalc(this, 0.8, 0, 0.2, 0.12, 'Plan 80% / 20%')">80% Enganche<br>20% Ent (12% Desc)</button>
                 </div>
                 
                 <div class="result-card" id="res-card">
                     <div style="color:var(--secondary-color); font-size:20px; font-weight:600; margin-bottom:20px;" id="res-plan-name"></div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Precio de Lista:</span><span id="res-list"></span></div>
-                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:12px; color:var(--danger-red); font-weight:600;"><span>Ahorro (Descuento):</span><span id="res-desc-val" style="text-align:right;"></span></div>
+                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:12px; color:#d9534f; font-weight:600;"><span>Ahorro (Descuento):</span><span id="res-desc-val" style="text-align:right;"></span></div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Enganche Inicial:</span><span id="res-down"></span></div>
                     
                     <div id="obra-block" class="obra-block" style="display:none;">
@@ -134,7 +139,9 @@
                 const c = l.split('\t');
                 return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
             }).filter(i => i.disp !== 'NO');
+            
             updateStats();
+            renderCatalog(inventory); // Carga inicial de todas las unidades
         });
 
         function updateStats() {
@@ -176,7 +183,6 @@
             document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
             document.getElementById('m-data').innerHTML = `<strong>Torre:</strong> ${item.t}<br><strong>Entrega:</strong> ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><strong>Modelo:</strong> ${item.m}<br><strong>Superficie:</strong> ${item.area} m²<br><strong>Precio Lista:</strong> ${item.p}`;
             
-            // Inyectar Carrusel con Botones
             document.getElementById('carousel-images').innerHTML = `
                 <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
                 <img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'">
@@ -186,24 +192,26 @@
             
             slideIdx = 0;
             document.getElementById('res-card').style.display = 'none';
+            document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
             document.getElementById('unitModal').style.display = 'block';
         }
 
         function moveSlide(n) {
             const slides = document.querySelectorAll('.slide-img');
-            const visibleSlides = Array.from(slides).filter(s => s.style.display !== 'none');
-            
-            if (visibleSlides.length <= 1) return; // No mover si solo hay una imagen
-
-            visibleSlides[slideIdx].classList.remove('active');
-            slideIdx = (slideIdx + n + visibleSlides.length) % visibleSlides.length;
-            visibleSlides[slideIdx].classList.add('active');
+            const visible = Array.from(slides).filter(s => s.style.display !== 'none');
+            if (visible.length <= 1) return;
+            visible[slideIdx].classList.remove('active');
+            slideIdx = (slideIdx + n + visible.length) % visible.length;
+            visible[slideIdx].classList.add('active');
         }
 
-        function runCalc(d, c, e, ds, n) {
+        function runCalc(btn, d, c, e, ds, n) {
+            document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
             const savings = curPrice * ds;
             const final = curPrice - savings;
-            const months = curTorre === 'A' ? 31 : 43; // Mayo 2026 a Dic 2028/2029
+            const months = curTorre === 'A' ? 31 : 43;
             
             document.getElementById('res-plan-name').innerText = n;
             document.getElementById('res-list').innerText = fmt(curPrice);
@@ -225,7 +233,7 @@
 
             document.getElementById('res-delivery').innerText = fmt(final * e);
             document.getElementById('res-total').innerText = fmt(final);
-            document.getElementById('res-note').innerText = `* Cálculo basado en entrega de Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}) considerando fecha actual Mayo 2026.`;
+            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}).`;
             document.getElementById('res-card').style.display = 'block';
         }
 
