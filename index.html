@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario - Nautica Residences by Nauma</title>
-    <!-- Librerías para PDF -->
+    <!-- Librería para Captura de Pantalla -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
@@ -69,8 +68,9 @@
         .btn-pago { border: none; padding: 15px 10px; border-radius: 12px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; transition: 0.3s; }
         .btn-pago:hover, .btn-pago.active { background: var(--secondary-color); }
         
-        .btn-pdf { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-pdf:hover { background: var(--secondary-color); }
+        /* Botón de Captura */
+        .btn-capture { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Montserrat', sans-serif; }
+        .btn-capture:hover { background: var(--secondary-color); }
 
         /* Resultados Simulador */
         .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
@@ -97,9 +97,9 @@
     
     <div class="catalog-grid" id="catalog"></div>
 
-    <!-- MODAL (ID 'pdf-content' para capturar la información) -->
+    <!-- MODAL (Área de captura id='capture-area') -->
     <div id="unitModal" class="modal">
-        <div class="modal-content" id="pdf-area">
+        <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
@@ -133,8 +133,9 @@
                     <div style="font-size:11px; color:#666; font-style:italic; margin-top:10px;" id="res-note"></div>
                 </div>
 
-                <button class="btn-pdf" id="btn-descargar-pdf" onclick="exportarPDF()">
-                    <span>📄 Generar Ficha PDF</span>
+                <!-- BOTÓN DE CAPTURA ACTUALIZADO -->
+                <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">
+                    <span>📸 Capturar Ficha para WhatsApp</span>
                 </button>
             </div>
         </div>
@@ -204,7 +205,6 @@
             document.getElementById('unitModal').style.display = 'block';
         }
 
-        /* Carrusel Automático y Manual */
         function startAutoCarousel() {
             clearInterval(autoInterval);
             autoInterval = setInterval(() => moveSlide(1), 5000);
@@ -213,7 +213,7 @@
         function manualMove(n) {
             clearInterval(autoInterval);
             moveSlide(n);
-            setTimeout(startAutoCarousel, 3000); // Reanuda tras 3 seg de inactividad
+            setTimeout(startAutoCarousel, 3000);
         }
 
         function moveSlide(n) {
@@ -246,35 +246,39 @@
             } else { obra.style.display = 'none'; }
             document.getElementById('res-delivery').innerText = fmt(final * e);
             document.getElementById('res-total').innerText = fmt(final);
-            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (Dic ${curTorre === 'A' ? '2028' : '2029'}) desde Mayo 2026.`;
+            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (Dic ${curTorre === 'A' ? '2028' : '2029'}).`;
             document.getElementById('res-card').style.display = 'block';
         }
 
-        /* Exportar a PDF (Limpia botones antes de capturar) */
-        async function exportarPDF() {
-            const { jsPDF } = window.jspdf;
-            const area = document.getElementById('pdf-area');
-            const btnPdf = document.getElementById('btn-descargar-pdf');
+        /* GENERAR CAPTURA DE IMAGEN (PNG) */
+        async function generarCaptura() {
+            const area = document.getElementById('capture-area');
+            const btnCapture = document.getElementById('btn-screenshot');
             const btnClose = document.querySelector('.close');
             const navBtns = document.querySelectorAll('.nav-btn');
 
-            // Ocultar botones para que no salgan en el PDF
-            btnPdf.style.display = 'none';
+            // Ocultar elementos de interfaz
+            btnCapture.style.display = 'none';
             btnClose.style.display = 'none';
             navBtns.forEach(b => b.style.display = 'none');
 
-            canvas = await html2canvas(area, { scale: 2, useCORS: true });
+            // Crear el lienzo
+            const canvas = await html2canvas(area, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: "#FFFFFF" 
+            });
+
+            // Convertir a imagen y descargar
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('l', 'mm', 'a4');
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            const link = document.createElement('a');
+            const unidadNombre = document.getElementById('modal-title').innerText.replace(/\s+/g,'_');
+            link.download = `Ficha_Nautica_${unidadNombre}.png`;
+            link.href = imgData;
+            link.click();
 
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`Nautica_Unidad_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.pdf`);
-
-            // Mostrar botones de nuevo
-            btnPdf.style.display = 'flex';
+            // Restaurar interfaz
+            btnCapture.style.display = 'flex';
             btnClose.style.display = 'block';
             navBtns.forEach(b => b.style.display = 'block');
         }
