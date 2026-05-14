@@ -114,7 +114,6 @@
                     <div style="border-top:1px solid #333; padding-top:15px; margin-top:15px; font-weight:700; font-size:20px; display:flex; justify-content:space-between;"><span>Costo Final:</span><span id="res-total"></span></div>
                     <div style="font-size:11px; color:#666; font-style:italic; margin-top:10px;" id="res-note"></div>
                 </div>
-                <!-- Botón actualizado -->
                 <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Capturar Ficha</button>
             </div>
         </div>
@@ -123,6 +122,10 @@
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
         let inventory = [], curPrice = 0, curTorre = "", slideIdx = 0, autoInterval;
+        
+        // Variables para Swipe
+        let touchstartX = 0;
+        let touchendX = 0;
 
         fetch(sheetUrl).then(r => r.text()).then(data => {
             const lines = data.trim().split('\n');
@@ -163,9 +166,24 @@
             const item = inventory.find(i => i.u === uId);
             curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0, curTorre = item.t;
             const modelKey = item.m.toUpperCase().replace(/\s+/g,'');
+            const carousel = document.getElementById('carousel-images');
+
             document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
             document.getElementById('m-data').innerHTML = `Torre ${item.t} | Modelo ${item.m}<br>Vista ${item.v}<br>Entrega ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><b>Precio ${item.p}</b>`;
-            document.getElementById('carousel-images').innerHTML = `<button class="nav-btn prev" onclick="manualMove(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="manualMove(1)">&#10095;</button>`;
+            
+            carousel.innerHTML = `<button class="nav-btn prev" onclick="manualMove(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="manualMove(1)">&#10095;</button>`;
+            
+            // Lógica Swipe
+            carousel.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            carousel.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                if (touchendX < touchstartX - 50) manualMove(1);
+                if (touchendX > touchstartX + 50) manualMove(-1);
+            }, {passive: true});
+
             slideIdx = 0; startAutoCarousel();
             document.getElementById('res-card').style.display = 'none';
             document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
