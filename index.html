@@ -1,111 +1,181 @@
-<script>
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
-    let inventory = [], curPrice = 0, curTorre = "", slideIdx = 0, autoInterval;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - Nautica Residences by Nauma</title>
+    <!-- Librería para Captura de Pantalla -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
-    // Variables para el deslizamiento táctil
-    let touchstartX = 0;
-    let touchendX = 0;
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
-    fetch(sheetUrl).then(r => r.text()).then(data => {
-        const lines = data.trim().split('\n');
-        inventory = lines.slice(1).map(l => {
-            const c = l.split('\t');
-            return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
-        }).filter(i => i.disp !== 'NO');
-        updateStats();
-        renderCatalog(inventory);
-    });
+        :root {
+            --primary-color: #0A192F;
+            --secondary-color: #C5A880; 
+            --bg-color: #F8F9FA;
+            --text-color: #333333;
+            --card-bg: #FFFFFF;
+            --accent-blue: #2D4A63;
+            --obra-bg: #eef2f5;
+        }
 
-    function updateStats() {
-        const availA = inventory.filter(i => i.t === 'A').length, availB = inventory.filter(i => i.t === 'B').length;
-        const soldA = 190 - availA, soldB = 190 - availB;
-        document.getElementById('stats-bar').innerHTML = `
-            <span class="stats-main">Tablero de Disponibilidad Nautica</span>
-            <div class="stats-grid">
-                <div class="stat-item">Ventas Torre A: ${soldA} (${((soldA/190)*100).toFixed(1)}%)</div>
-                <div class="stat-item">Ventas Torre B: ${soldB} (${((soldB/190)*100).toFixed(1)}%)</div>
-                <div class="stat-item stat-highlight">Disponibles: ${inventory.length} de 380</div>
-            </div>`;
-    }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        
+        header { background-color: var(--primary-color); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--secondary-color); }
+        header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 4px; margin: 0; font-size: 38px; text-transform: uppercase; }
+        header p { font-size: 14px; letter-spacing: 6px; margin-top: 15px; color: var(--secondary-color); text-transform: uppercase; font-weight: 400; }
 
-    function renderCatalog(data) {
-        const grid = document.getElementById('catalog');
-        grid.innerHTML = data.map(i => `
-            <div class="card" onclick="openModal('${i.u}')">
-                <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>
-                <div class="card-content">
-                    <h3 class="card-title">Unidad ${i.u}</h3>
-                    <div class="card-details"><b>Torre ${i.t}</b> | ${i.area} m²</div>
-                    <div class="card-price">${i.p}</div>
+        .filters { display: flex; justify-content: center; gap: 40px; padding: 40px 20px; background-color: white; flex-wrap: wrap; }
+        .filter-group { display: flex; flex-direction: column; min-width: 250px; }
+        .filter-group label { font-weight: 800; color: var(--primary-color); margin-bottom: 12px; font-size: 18px; }
+        .filter-group select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 16px; outline: none; cursor: pointer; color: #333; }
+
+        .stats-bar { padding: 40px 20px; background: #eef2f5; color: var(--primary-color); text-align: center; }
+        .stats-main { font-size: 24px; font-weight: 800; display: block; margin-bottom: 25px; }
+        .stats-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+        .stat-item { background: white; padding: 12px 30px; border-radius: 50px; border: 1px solid #ddd; font-weight: 700; font-size: 16px; }
+
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; padding: 40px; max-width: 1250px; margin: 0 auto; }
+        .card { background-color: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: 0.3s ease; cursor: pointer; border: 1px solid #f0f0f0; }
+        .card-img-placeholder { width: 100%; height: 220px; background-color: white; display: flex; align-items: center; justify-content: center; }
+        .card-content { padding: 30px; text-align: left; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--primary-color); }
+        .card-price { font-size: 26px; font-weight: 600; color: var(--secondary-color); margin-top: 15px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); overflow-y: auto; }
+        .modal-content { background-color: white; margin: 2% auto; border-radius: 12px; max-width: 1100px; display: flex; flex-direction: row; overflow: hidden; position: relative; }
+        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100; }
+        .carousel-area { flex: 1.2; background-color: black; display: flex; align-items: center; justify-content: center; position: relative; min-height: 450px; }
+        .slide-img { max-width: 100%; max-height: 500px; display: none; }
+        .slide-img.active { display: block; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 25px 15px; cursor: pointer; z-index: 60; }
+        .info-area { flex: 1; padding: 40px; background: white; overflow-y: auto; }
+        .btn-pago { border: none; padding: 15px; border-radius: 12px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; width: 100%; margin-bottom: 10px; }
+        .btn-pago.active { background: var(--secondary-color); }
+        .btn-capture { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
+
+        @media (max-width: 900px) { .modal-content { flex-direction: column; } .filter-group { min-width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NAUTICA RESIDENCES</h1>
+        <p>by NAUMA</p>
+    </header>
+
+    <div class="filters">
+        <div class="filter-group"><label>Torre</label><select id="f-torre"><option value="all">Todas</option><option value="A">Torre A</option><option value="B">Torre B</option></select></div>
+        <div class="filter-group"><label>Recámaras</label><select id="f-recamaras"><option value="all">Todas</option><option value="1">1 Recámara</option><option value="2">2 Recámaras</option><option value="3">3 Recámaras</option></select></div>
+        <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">Cargando unidades...</div>
+    <div class="catalog-grid" id="catalog"></div>
+
+    <div id="unitModal" class="modal">
+        <div class="modal-content" id="capture-area">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="carousel-area" id="carousel-images"></div>
+            <div class="info-area">
+                <h2 id="modal-title" style="font-family:'Playfair Display';">Unidad</h2>
+                <div id="m-data"></div>
+                <div style="margin-top:20px;">
+                    <button class="btn-pago" onclick="runCalc(this, 0.3, 0, 0.7, 0, 'Plan 30/70')">Plan 30/70</button>
+                    <button class="btn-pago" onclick="runCalc(this, 0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30 (4% Desc)')">Plan 30/40/30</button>
                 </div>
-            </div>`).join('');
-    }
+                <div class="result-card" id="res-card">
+                    <div id="res-plan-name" style="color:var(--secondary-color); font-weight:700;"></div>
+                    <div id="res-total" style="font-size:22px; font-weight:700; margin-top:10px;"></div>
+                </div>
+                <button class="btn-capture" onclick="generarCaptura()">📸 Capturar Ficha</button>
+            </div>
+        </div>
+    </div>
 
-    function openModal(uId) {
-        const item = inventory.find(i => i.u === uId);
-        curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0, curTorre = item.t;
-        const modelKey = item.m.toUpperCase().replace(/\s+/g,'');
-        
-        const carousel = document.getElementById('carousel-images');
-        document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
-        document.getElementById('m-data').innerHTML = `Torre ${item.t} | Modelo ${item.m}<br>Vista ${item.v}<br>Entrega ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><b>Precio ${item.p}</b>`;
-        
-        carousel.innerHTML = `<button class="nav-btn prev" onclick="manualMove(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="manualMove(1)">&#10095;</button>`;
-        
-        // --- NUEVA LÓGICA TÁCTIL ---
-        carousel.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX;
-        }, {passive: true});
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
+        let inventory = [], curPrice = 0, curTorre = "", slideIdx = 0, autoInterval, touchstartX = 0, touchendX = 0;
 
-        carousel.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            handleGesture();
-        }, {passive: true});
-        // ---------------------------
+        fetch(sheetUrl).then(r => r.text()).then(data => {
+            const lines = data.trim().split('\n');
+            inventory = lines.slice(1).map(l => {
+                const c = l.split('\t');
+                return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
+            }).filter(i => i.disp !== 'NO');
+            updateStats();
+            renderCatalog(inventory);
+        }).catch(err => { document.getElementById('stats-bar').innerText = "Error cargando datos del Sheet."; });
 
-        slideIdx = 0; startAutoCarousel();
-        document.getElementById('res-card').style.display = 'none';
-        document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
-        document.getElementById('unitModal').style.display = 'block';
-    }
+        function updateStats() {
+            const availA = inventory.filter(i => i.t === 'A').length, soldA = 190 - availA;
+            const availB = inventory.filter(i => i.t === 'B').length, soldB = 190 - availB;
+            document.getElementById('stats-bar').innerHTML = `
+                <span class="stats-main">Tablero de Disponibilidad Nautica</span>
+                <div class="stats-grid">
+                    <div class="stat-item">Ventas A: ${soldA} (${((soldA/190)*100).toFixed(1)}%)</div>
+                    <div class="stat-item">Ventas B: ${soldB} (${((soldB/190)*100).toFixed(1)}%)</div>
+                    <div class="stat-item">Disponibles: ${inventory.length} de 380</div>
+                </div>`;
+        }
 
-    function handleGesture() {
-        if (touchendX < touchstartX - 50) manualMove(1);  // Desliza a la izquierda -> Siguiente
-        if (touchendX > touchstartX + 50) manualMove(-1); // Desliza a la derecha -> Anterior
-    }
+        function renderCatalog(data) {
+            const grid = document.getElementById('catalog');
+            grid.innerHTML = data.map(i => `
+                <div class="card" onclick="openModal('${i.u}')">
+                    <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">Unidad ${i.u}</h3>
+                        <div class="card-details">Torre ${i.t} | ${i.area} m²</div>
+                        <div class="card-price">${i.p}</div>
+                    </div>
+                </div>`).join('');
+        }
 
-    function startAutoCarousel() { clearInterval(autoInterval); autoInterval = setInterval(() => moveSlide(1), 5000); }
-    function manualMove(n) { clearInterval(autoInterval); moveSlide(n); setTimeout(startAutoCarousel, 3000); }
-    function moveSlide(n) { const s = document.querySelectorAll('.slide-img'), v = Array.from(s).filter(x => x.style.display !== 'none'); if (v.length <= 1) return; v[slideIdx].classList.remove('active'); slideIdx = (slideIdx + n + v.length) % v.length; v[slideIdx].classList.add('active'); }
+        function openModal(uId) {
+            const item = inventory.find(i => i.u === uId), carousel = document.getElementById('carousel-images');
+            curPrice = parseFloat(item.p.replace(/[^0-9.]/g, '')) || 0, curTorre = item.t;
+            const key = item.m.toUpperCase().replace(/\s+/g,'');
+            document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
+            document.getElementById('m-data').innerHTML = `Torre ${item.t} | Modelo ${item.m}<br>Vista ${item.v}<br>Precio ${item.p}`;
+            carousel.innerHTML = `<button class="nav-btn" style="left:0" onclick="manualMove(-1)">&#10094;</button><img class="slide-img active" src="${key}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${key}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${key}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn" style="right:0" onclick="manualMove(1)">&#10095;</button>`;
+            
+            carousel.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+            carousel.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; if(touchendX < touchstartX - 50) manualMove(1); if(touchendX > touchstartX + 50) manualMove(-1); }, {passive: true});
+            
+            slideIdx = 0; startAuto();
+            document.getElementById('res-card').style.display = 'none';
+            document.getElementById('unitModal').style.display = 'block';
+        }
 
-    function runCalc(btn, d, c, e, ds, n) {
-        document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-        const final = curPrice * (1 - ds), m = curTorre === 'A' ? 31 : 43;
-        document.getElementById('res-plan-name').innerText = n;
-        document.getElementById('res-list').innerText = fmt(curPrice);
-        if(ds > 0) { document.getElementById('row-desc').style.display = 'flex'; document.getElementById('res-desc-val').innerHTML = `- ${fmt(curPrice * ds)} (${Math.round(ds * 100)}%)`; } else { document.getElementById('row-desc').style.display = 'none'; }
-        document.getElementById('res-down').innerText = fmt(final * d);
-        const ob = document.getElementById('obra-block');
-        if(c > 0) { ob.style.display = 'block'; document.getElementById('res-obra-total').innerText = fmt(final * c); document.getElementById('res-months-label').innerText = `${m} meses de:`; document.getElementById('res-monthly-val').innerText = fmt((final * c) / m); } else { ob.style.display = 'none'; }
-        document.getElementById('res-delivery').innerText = fmt(final * e); document.getElementById('res-total').innerText = fmt(final);
-        document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}).`;
-        document.getElementById('res-card').style.display = 'block';
-    }
+        function startAuto() { clearInterval(autoInterval); autoInterval = setInterval(() => move(1), 5000); }
+        function manualMove(n) { clearInterval(autoInterval); move(n); setTimeout(startAuto, 3000); }
+        function move(n) { const s = document.querySelectorAll('.slide-img'), v = Array.from(s).filter(x => x.style.display !== 'none'); if(v.length <= 1) return; v[slideIdx].classList.remove('active'); slideIdx = (slideIdx + n + v.length) % v.length; v[slideIdx].classList.add('active'); }
 
-    async function generarCaptura() {
-        const area = document.getElementById('capture-area'), btn = document.getElementById('btn-screenshot'), cl = document.querySelector('.close'), nv = document.querySelectorAll('.nav-btn');
-        btn.style.display = 'none'; cl.style.display = 'none'; nv.forEach(n => n.style.display = 'none');
-        const canvas = await html2canvas(area, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" });
-        const link = document.createElement('a'); link.download = `Nautica_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.png`; link.href = canvas.toDataURL('image/png'); link.click();
-        btn.style.display = 'flex'; cl.style.display = 'block'; nv.forEach(n => n.style.display = 'block');
-    }
+        function runCalc(btn, d, c, e, ds, n) {
+            document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            const f = curPrice * (1 - ds);
+            document.getElementById('res-plan-name').innerText = n;
+            document.getElementById('res-total').innerText = fmt(f);
+            document.getElementById('res-card').style.display = 'block';
+        }
 
-    function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
-    function closeModal() { clearInterval(autoInterval); document.getElementById('unitModal').style.display = 'none'; }
-    
-    document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
-        const t = document.getElementById('f-torre').value, r = document.getElementById('f-recamaras').value, v = document.getElementById('f-vista').value.toLowerCase();
-        const f = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
-        renderCatalog(f);
-    }));
-</script>
+        async function generarCaptura() {
+            const area = document.getElementById('capture-area'), btn = document.querySelector('.btn-capture'), cl = document.querySelector('.close'), nv = document.querySelectorAll('.nav-btn');
+            btn.style.display = 'none'; cl.style.display = 'none'; nv.forEach(n => n.style.display = 'none');
+            const canvas = await html2canvas(area, { scale: 2, useCORS: true });
+            const link = document.createElement('a'); link.download = `Nautica_${document.getElementById('modal-title').innerText}.png`; link.href = canvas.toDataURL('image/png'); link.click();
+            btn.style.display = 'block'; cl.style.display = 'block'; nv.forEach(n => n.style.display = 'block');
+        }
+
+        function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
+        function closeModal() { clearInterval(autoInterval); document.getElementById('unitModal').style.display = 'none'; }
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
+            const t = document.getElementById('f-torre').value, r = document.getElementById('f-recamaras').value, v = document.getElementById('f-vista').value.toLowerCase();
+            renderCatalog(inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v))));
+        }));
+    </script>
+</body>
+</html>
