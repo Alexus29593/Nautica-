@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario - Nautica Residences by Nauma</title>
+    <!-- Librerías para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -22,63 +26,58 @@
         header h1 { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: 2px; margin: 0; font-size: 28px; }
         header p { font-size: 12px; letter-spacing: 4px; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; }
 
-        /* Filtros */
+        /* Filtros y Estadísticas */
         .filters { display: flex; justify-content: center; gap: 30px; padding: 25px; background-color: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
         .filter-group { display: flex; flex-direction: column; min-width: 180px; }
         .filter-group label { font-weight: 700; color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
         .filter-group select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; outline: none; cursor: pointer; }
 
-        /* Tablero de Estadísticas */
         .stats-bar { padding: 20px; background: #eef2f5; color: var(--primary-color); font-size: 14px; text-align: center; }
         .stats-main { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
         .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         .stat-item { background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #ddd; font-weight: 600; }
 
-        /* Tarjeta Estilo image_bf9919.png */
+        /* Grid de Unidades */
         .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; padding: 40px; max-width: 1250px; margin: 0 auto; }
         .card { background-color: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: 0.3s ease; cursor: pointer; border: 1px solid #f0f0f0; }
         .card:hover { transform: translateY(-5px); border-color: var(--secondary-color); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
         .card-img-placeholder { width: 100%; height: 220px; background-color: white; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f5f5f5; }
-        
         .card-content { padding: 30px; text-align: left; }
         .card-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--primary-color); margin: 0 0 15px 0; }
-        .card-details { font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--primary-color); margin-bottom: 20px; letter-spacing: 0.5px; }
-        .card-details b { font-weight: 700; }
+        .card-details { font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--primary-color); margin-bottom: 20px; }
         .card-price { font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 600; color: var(--secondary-color); letter-spacing: 1px; }
 
-        /* Modal y Carrusel */
+        /* Modal Principal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); overflow-y: auto; }
         .modal-content { background-color: white; margin: 2% auto; border-radius: 12px; max-width: 1100px; display: flex; flex-direction: row; overflow: hidden; position: relative; }
-        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 30; }
+        .close { color: var(--primary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 50; }
 
+        /* Carrusel Automático */
         .carousel-area { flex: 1.2; background-color: black; display: flex; align-items: center; justify-content: center; position: relative; min-height: 450px; }
-        .slide-img { max-width: 100%; max-height: 500px; display: none; animation: fade 0.5s; }
+        .slide-img { max-width: 100%; max-height: 500px; display: none; animation: fade 0.8s; }
         .slide-img.active { display: block; }
-        @keyframes fade { from {opacity: .4} to {opacity: 1} }
+        @keyframes fade { from {opacity: 0.2} to {opacity: 1} }
 
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 24px; z-index: 20; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 25px 15px; cursor: pointer; font-size: 24px; z-index: 40; transition: 0.3s; }
+        .nav-btn:hover { background: var(--secondary-color); }
         .prev { left: 0; border-radius: 0 8px 8px 0; }
         .next { right: 0; border-radius: 8px 0 0 8px; }
 
+        /* Info y Botones de Acción */
         .info-area { flex: 1; padding: 40px; background: white; overflow-y: auto; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
-        .btn-pago { 
-            border: none; padding: 15px 10px; border-radius: 12px; cursor: pointer; 
-            color: white; background: var(--accent-blue); font-weight: 700; 
-            font-size: 11px; transition: all 0.3s ease; line-height: 1.4;
-        }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .btn-pago { border: none; padding: 15px 10px; border-radius: 12px; cursor: pointer; color: white; background: var(--accent-blue); font-weight: 700; font-size: 11px; transition: 0.3s; }
         .btn-pago:hover, .btn-pago.active { background: var(--secondary-color); }
         
+        .btn-pdf { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-pdf:hover { background: var(--secondary-color); }
+
+        /* Resultados Simulador */
         .result-card { margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 10px; }
         .obra-block { background: var(--obra-bg); padding: 15px; border-radius: 8px; margin: 15px 0; }
         .res-total-final { border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-weight: 700; font-size: 20px; }
 
-        @media (max-width: 900px) { 
-            .modal-content { flex-direction: column; } 
-            .carousel-area { min-height: 300px; }
-            .catalog-grid { padding: 20px; }
-        }
+        @media (max-width: 900px) { .modal-content { flex-direction: column; } .carousel-area { min-height: 300px; } }
     </style>
 </head>
 <body>
@@ -94,17 +93,20 @@
         <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
     </div>
 
-    <div class="stats-bar" id="stats-bar">Calculando inventario...</div>
+    <div class="stats-bar" id="stats-bar">Actualizando tablero de ventas...</div>
+    
     <div class="catalog-grid" id="catalog"></div>
 
+    <!-- MODAL (ID 'pdf-content' para capturar la información) -->
     <div id="unitModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" id="pdf-area">
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
                 <h2 id="modal-title" style="font-family:'Playfair Display'; font-size: 36px;">Unidad</h2>
-                <div id="m-data" style="font-size:16px; line-height:1.8; margin-bottom:20px;"></div>
-                <div style="font-weight:700; font-size:16px; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Simulador de Pagos</div>
+                <div id="m-data" style="font-size:16px; line-height:1.8; margin-bottom:10px;"></div>
+                
+                <div style="font-weight:700; font-size:14px; text-transform:uppercase; margin-top:10px;">Simulador de Pagos</div>
                 <div class="btn-grid">
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0, 0.7, 0, 'Plan 30% / 70%')">30% Enganche<br>70% Entrega</button>
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0.4, 0.3, 0.04, 'Plan 30% / 40% / 30%')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
@@ -113,23 +115,27 @@
                 </div>
                 
                 <div class="result-card" id="res-card">
-                    <div style="color:var(--secondary-color); font-size:22px; font-weight:600; margin-bottom:20px;" id="res-plan-name"></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Precio de Lista:</span><span id="res-list"></span></div>
-                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:12px; color:#d9534f; font-weight:600;"><span>Ahorro (Descuento):</span><span id="res-desc-val" style="text-align:right;"></span></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Enganche Inicial:</span><span id="res-down"></span></div>
+                    <div style="color:var(--secondary-color); font-size:22px; font-weight:600; margin-bottom:15px;" id="res-plan-name"></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Precio de Lista:</span><span id="res-list"></span></div>
+                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:8px; color:#d9534f; font-weight:600;"><span>Ahorro (Descuento):</span><span id="res-desc-val"></span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Enganche Inicial:</span><span id="res-down"></span></div>
                     
                     <div id="obra-block" class="obra-block" style="display:none;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
                         <div style="display:flex; justify-content:space-between; align-items:center; color:var(--accent-blue);">
-                            <span style="font-size:14px;" id="res-months-label">mensualidades de:</span>
-                            <span style="font-weight:700; font-size:18px;" id="res-monthly-val"></span>
+                            <span style="font-size:13px;" id="res-months-label">mensualidades de:</span>
+                            <span style="font-weight:700; font-size:17px;" id="res-monthly-val"></span>
                         </div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
                     <div class="res-total-final" style="display:flex; justify-content:space-between;"><span>Costo Final:</span><span id="res-total"></span></div>
-                    <div style="font-size:12px; color:#666; font-style:italic; margin-top:15px;" id="res-note"></div>
+                    <div style="font-size:11px; color:#666; font-style:italic; margin-top:10px;" id="res-note"></div>
                 </div>
+
+                <button class="btn-pdf" id="btn-descargar-pdf" onclick="exportarPDF()">
+                    <span>📄 Generar Ficha PDF</span>
+                </button>
             </div>
         </div>
     </div>
@@ -137,7 +143,7 @@
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLW2Kd5jqnvnV0-lL3jnfs_r75V6xeMoCh9bS_pETsSrZTS1J1Tc3YViL2D8IbUZgRplHDUqt8GmZA/pub?output=tsv';
         let inventory = [];
-        let curPrice = 0, curTorre = "", slideIdx = 0;
+        let curPrice = 0, curTorre = "", slideIdx = 0, autoInterval;
 
         fetch(sheetUrl).then(r => r.text()).then(data => {
             const lines = data.trim().split('\n');
@@ -145,7 +151,6 @@
                 const c = l.split('\t');
                 return { t: c[0].replace('TORRE ', '').trim(), u: c[1].trim(), r: c[2].trim(), m: c[4].trim(), area: c[5].trim(), v: c[6].trim(), p: c[8].trim(), disp: c[9].trim().toUpperCase() };
             }).filter(i => i.disp !== 'NO');
-            
             updateStats();
             renderCatalog(inventory); 
         });
@@ -155,7 +160,7 @@
             const availB = inventory.filter(i => i.t === 'B').length;
             const soldA = 190 - availA; const soldB = 190 - availB;
             document.getElementById('stats-bar').innerHTML = `
-                <span class="stats-main">Tablero de Disponibilidad Nautica</span>
+                <span class="stats-main">Tablero de Ventas Nautica</span>
                 <div class="stats-grid">
                     <div class="stat-item">Ventas Torre A: ${soldA} (${((soldA/190)*100).toFixed(1)}%)</div>
                     <div class="stat-item">Ventas Torre B: ${soldB} (${((soldB/190)*100).toFixed(1)}%)</div>
@@ -167,26 +172,14 @@
             const grid = document.getElementById('catalog');
             grid.innerHTML = data.map(i => `
                 <div class="card" onclick="openModal('${i.u}')">
-                    <div class="card-img-placeholder">
-                        <img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='comodin.jpg'">
-                    </div>
+                    <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>
                     <div class="card-content">
                         <h3 class="card-title">Unidad ${i.u}</h3>
-                        <div class="card-details">
-                            <b>Torre:</b> ${i.t} | <b>Área:</b> ${i.area} m²
-                        </div>
+                        <div class="card-details"><b>Torre:</b> ${i.t} | <b>Área:</b> ${i.area} m²</div>
                         <div class="card-price">${i.p}</div>
                     </div>
                 </div>`).join('');
         }
-
-        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
-            const t = document.getElementById('f-torre').value;
-            const r = document.getElementById('f-recamaras').value;
-            const v = document.getElementById('f-vista').value.toLowerCase();
-            const filtered = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
-            renderCatalog(filtered);
-        }));
 
         function openModal(uId) {
             const item = inventory.find(i => i.u === uId);
@@ -195,19 +188,32 @@
             const modelKey = item.m.toUpperCase().replace(/\s+/g,'');
             
             document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
-            document.getElementById('m-data').innerHTML = `<strong>Torre:</strong> ${item.t}<br><strong>Entrega:</strong> ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><strong>Modelo:</strong> ${item.m}<br><strong>Superficie:</strong> ${item.area} m²<br><strong>Precio Lista:</strong> ${item.p}`;
+            document.getElementById('m-data').innerHTML = `<strong>Torre:</strong> ${item.t} | <strong>Modelo:</strong> ${item.m}<br><strong>Vista:</strong> ${item.v}<br><strong>Entrega:</strong> ${item.t === 'A' ? 'Dic 2028' : 'Dic 2029'}<br><strong>Precio:</strong> ${item.p}`;
             
             document.getElementById('carousel-images').innerHTML = `
-                <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                <button class="nav-btn prev" onclick="manualMove(-1)">&#10094;</button>
                 <img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'">
                 <img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'">
                 <img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'">
-                <button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
+                <button class="nav-btn next" onclick="manualMove(1)">&#10095;</button>`;
             
             slideIdx = 0;
+            startAutoCarousel();
             document.getElementById('res-card').style.display = 'none';
             document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
             document.getElementById('unitModal').style.display = 'block';
+        }
+
+        /* Carrusel Automático y Manual */
+        function startAutoCarousel() {
+            clearInterval(autoInterval);
+            autoInterval = setInterval(() => moveSlide(1), 5000);
+        }
+
+        function manualMove(n) {
+            clearInterval(autoInterval);
+            moveSlide(n);
+            setTimeout(startAutoCarousel, 3000); // Reanuda tras 3 seg de inactividad
         }
 
         function moveSlide(n) {
@@ -222,37 +228,70 @@
         function runCalc(btn, d, c, e, ds, n) {
             document.querySelectorAll('.btn-pago').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            const savings = curPrice * ds;
-            const final = curPrice - savings;
-            const months = curTorre === 'A' ? 31 : 43;
-            
+            const final = curPrice * (1 - ds);
+            const m = curTorre === 'A' ? 31 : 43;
             document.getElementById('res-plan-name').innerText = n;
             document.getElementById('res-list').innerText = fmt(curPrice);
-            
             if(ds > 0) {
                 document.getElementById('row-desc').style.display = 'flex';
-                document.getElementById('res-desc-val').innerHTML = `- ${fmt(savings)}<br>(${Math.round(ds * 100)}.0%)`;
+                document.getElementById('res-desc-val').innerHTML = `- ${fmt(curPrice * ds)} (${Math.round(ds * 100)}%)`;
             } else { document.getElementById('row-desc').style.display = 'none'; }
-
             document.getElementById('res-down').innerText = fmt(final * d);
-            
-            const obraBlock = document.getElementById('obra-block');
+            const obra = document.getElementById('obra-block');
             if(c > 0) {
-                obraBlock.style.display = 'block';
+                obra.style.display = 'block';
                 document.getElementById('res-obra-total').innerText = fmt(final * c);
-                document.getElementById('res-months-label').innerText = `${months} mensualidades de:`;
-                document.getElementById('res-monthly-val').innerText = fmt((final * c) / months);
-            } else { obraBlock.style.display = 'none'; }
-
+                document.getElementById('res-months-label').innerText = `${m} meses de:`;
+                document.getElementById('res-monthly-val').innerText = fmt((final * c) / m);
+            } else { obra.style.display = 'none'; }
             document.getElementById('res-delivery').innerText = fmt(final * e);
             document.getElementById('res-total').innerText = fmt(final);
-            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Dic 2029'}).`;
+            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (Dic ${curTorre === 'A' ? '2028' : '2029'}) desde Mayo 2026.`;
             document.getElementById('res-card').style.display = 'block';
         }
 
+        /* Exportar a PDF (Limpia botones antes de capturar) */
+        async function exportarPDF() {
+            const { jsPDF } = window.jspdf;
+            const area = document.getElementById('pdf-area');
+            const btnPdf = document.getElementById('btn-descargar-pdf');
+            const btnClose = document.querySelector('.close');
+            const navBtns = document.querySelectorAll('.nav-btn');
+
+            // Ocultar botones para que no salgan en el PDF
+            btnPdf.style.display = 'none';
+            btnClose.style.display = 'none';
+            navBtns.forEach(b => b.style.display = 'none');
+
+            canvas = await html2canvas(area, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('l', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Nautica_Unidad_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.pdf`);
+
+            // Mostrar botones de nuevo
+            btnPdf.style.display = 'flex';
+            btnClose.style.display = 'block';
+            navBtns.forEach(b => b.style.display = 'block');
+        }
+
         function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
-        function closeModal() { document.getElementById('unitModal').style.display = 'none'; }
+        function closeModal() { 
+            clearInterval(autoInterval);
+            document.getElementById('unitModal').style.display = 'none'; 
+        }
+
+        document.querySelectorAll('select').forEach(s => s.addEventListener('change', () => {
+            const t = document.getElementById('f-torre').value;
+            const r = document.getElementById('f-recamaras').value;
+            const v = document.getElementById('f-vista').value.toLowerCase();
+            const filtered = inventory.filter(i => (t === 'all' || i.t === t) && (r === 'all' || i.r === r) && (v === 'all' || i.v.toLowerCase().includes(v)));
+            renderCatalog(filtered);
+        }));
     </script>
 </body>
 </html>
