@@ -402,6 +402,7 @@
             display: grid;
             width: 100%;
             min-width: 650px;
+            background: #FFFFFF;
         }
         .compare-row {
             display: grid;
@@ -419,6 +420,7 @@
             justify-content: center;
             border-right: 1px solid var(--border-light);
             text-align: center;
+            background: #FFFFFF;
         }
         .compare-cell:last-child {
             border-right: none;
@@ -649,13 +651,11 @@
     <div class="stats-bar" id="stats-bar"></div>
     <div class="catalog-grid" id="catalog"></div>
 
-    <!-- Barra de Control de Comparativa Flotante -->
     <div id="compare-dock" class="compare-dock">
         <div class="compare-dock-info" id="compare-count">0/3 seleccionadas</div>
         <button class="btn-trigger-compare" onclick="openCompareModal()">Comparar Unidades</button>
     </div>
 
-    <!-- Modal Detalle de Unidad -->
     <div id="unitModal" class="modal">
         <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -695,15 +695,16 @@
         </div>
     </div>
 
-    <!-- Modal Cuadro de Comparativa -->
     <div id="compareModal" class="modal">
-        <div class="modal-content" style="max-width: 1050px; flex-direction: column; padding: 40px;">
-            <span class="close" onclick="closeCompareModal()">&times;</span>
-            <h2 style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px;">Cuadro Comparativo de Residencias</h2>
+        <div class="modal-content" id="compare-capture-wrapper" style="max-width: 1050px; flex-direction: column; padding: 40px; background: #FFFFFF;">
+            <span class="close" id="btn-compare-close" onclick="closeCompareModal()">&times;</span>
+            <h2 id="compare-modal-title" style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px;">Cuadro Comparativo de Residencias</h2>
             
-            <div class="compare-scroller">
+            <div class="compare-scroller" id="compare-table-scroller">
                 <div id="compare-matrix" class="compare-matrix"></div>
             </div>
+            
+            <button class="btn-capture" id="btn-compare-screenshot" onclick="generarCapturaComparativa()" style="margin-top: 30px;">📸 Exportar Comparativa Comercial</button>
         </div>
     </div>
 
@@ -843,7 +844,6 @@
             }
         }
 
-        // Refactor de la Matriz para la Inclusión de la Primera Imagen Nítida de la Unidad
         function openCompareModal() {
             const matrix = document.getElementById('compare-matrix');
             const unitsData = selectedForCompare.map(uId => inventory.find(i => i.u === uId));
@@ -851,38 +851,32 @@
             let gridTemplate = `180px repeat(${selectedForCompare.length}, 1fr)`;
             matrix.style.gridTemplateColumns = gridTemplate;
 
-            // Fila 1: Identificación de la Residencia
             let html = `<div class="compare-cell header-cell">Residencia</div>`;
             unitsData.forEach(u => {
-                html += `<div class="compare-cell" style="font-family: var(--font-extended); font-weight:700; color: var(--primary-color);">Unidad ${u.u}</div>`;
+                html += `<div class="compare-cell" style="font-family: var(--font-extended); font-weight:700; color: var(--primary-color); font-size:15px;">Unidad ${u.u}</div>`;
             });
 
-            // Fila 2: Render / Primera Imagen de la Residencia (Sólida, clara y sin opacidad)
             html += `<div class="compare-cell header-cell">Arquitectura</div>`;
             unitsData.forEach(u => {
                 const modelKey = u.m.toUpperCase().replace(/\s+/g,'');
                 html += `<div class="compare-cell" style="background: #FFFFFF; padding: 12px;"><img src="${modelKey}-1.jpg" style="width:100%; max-width:140px; height:100px; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>`;
             });
 
-            // Fila 3: Estructura de Torre
             html += `<div class="compare-cell header-cell">Torre</div>`;
             unitsData.forEach(u => {
                 html += `<div class="compare-cell">Torre ${u.t}</div>`;
             });
 
-            // Fila 4: Distribución de Metraje
             html += `<div class="compare-cell header-cell">Metraje</div>`;
             unitsData.forEach(u => {
                 html += `<div class="compare-cell" style="font-weight: 500;">${u.area} m²</div>`;
             });
 
-            // Fila 5: Orientación de Vista
             html += `<div class="compare-cell header-cell">Vista</div>`;
             unitsData.forEach(u => {
                 html += `<div class="compare-cell">${u.v}</div>`;
             });
 
-            // Fila 6: Costo Comercial de Lista
             html += `<div class="compare-cell header-cell">Costo de Lista</div>`;
             unitsData.forEach(u => {
                 html += `<div class="compare-cell" style="color: var(--secondary-color); font-weight: 500; font-size:16px;">${u.p}</div>`;
@@ -894,6 +888,56 @@
 
         function closeCompareModal() {
             document.getElementById('compareModal').style.display = 'none';
+        }
+
+        // Lógica de captura optimizada para el Cuadro Comparativo (Anti-recortes laterales)
+        async function generarCapturaComparativa() {
+            const wrapper = document.getElementById('compare-capture-wrapper');
+            const scroller = document.getElementById('compare-table-scroller');
+            const matrix = document.getElementById('compare-matrix');
+            
+            const btnScreenshot = document.getElementById('btn-compare-screenshot');
+            const btnClose = document.getElementById('btn-compare-close');
+            
+            // Ocultar botones interactivos
+            btnScreenshot.style.display = 'none';
+            btnClose.style.display = 'none';
+
+            // Guardar configuración responsiva original
+            const originalScrollerOverflow = scroller.style.overflowX;
+            const originalWrapperWidth = wrapper.style.width;
+
+            // Desenrollar horizontalmente la rejilla de datos al ancho real de la tabla (Evita recortes laterales)
+            const fullTableWidth = matrix.scrollWidth;
+            scroller.style.overflowX = 'visible';
+            if (window.innerWidth <= 900) {
+                wrapper.style.width = `${fullTableWidth + 80}px`; // Ajuste con márgenes simétricos
+            }
+
+            // Forzar fondos blancos e impecables en celdas de renders
+            document.querySelectorAll('.compare-cell').forEach(c => c.style.backgroundColor = '#FFFFFF');
+
+            const canvas = await html2canvas(wrapper, {
+                scale: 3,             // Nitidez quirúrgica Ultra-HD
+                useCORS: true,
+                backgroundColor: "#FFFFFF",
+                logging: false,
+                letterRendering: true,
+                imageTimeout: 0,
+                windowWidth: wrapper.scrollWidth,
+                windowHeight: wrapper.scrollHeight
+            });
+
+            const link = document.createElement('a');
+            link.download = `Nautica_Comparativa_Residencias.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+
+            // Restaurar diseño responsivo e interactivo original
+            scroller.style.overflowX = originalScrollerOverflow;
+            wrapper.style.width = originalWrapperWidth;
+            btnScreenshot.style.display = 'flex';
+            btnClose.style.display = 'block';
         }
 
         function toggleSort(type) {
