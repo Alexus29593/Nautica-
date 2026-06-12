@@ -19,7 +19,7 @@
             --obra-bg: #F7F8FA;
             --border-light: #E5E7EB;
 
-            /* Tipografías Premium Solicitadas */
+            /* Tipografías Premium */
             --font-extended: 'TRADE GOTHIC LT STD EXTENDED', 'Trade Gothic Extended', 'Arial Black', sans-serif;
             --font-trade: 'Trade Gothic Lt Std', 'Trade Gothic', sans-serif;
             --font-gilroy: 'GILROY', 'Gilroy-Medium', 'Helvetica Neue', sans-serif;
@@ -75,8 +75,8 @@
             display: flex; 
             justify-content: center; 
             gap: 40px; 
-            padding: 40px; 
-            background-color: white; 
+            padding: 45px 40px; 
+            background-color: #F4F5F7; /* Fondo sutil para que resalte el efecto Liquid Glass */
             flex-wrap: wrap; 
             align-items: flex-end;
             border-bottom: 1px solid var(--border-light);
@@ -93,15 +93,17 @@
             font-family: var(--font-extended), sans-serif;
             font-weight: 700; 
             color: #718096; 
-            margin-bottom: 10px; 
+            margin-bottom: 12px; 
             font-size: 11px; 
             text-transform: uppercase;
             letter-spacing: 1.5px;
         }
+        
+        /* Menus Desplegables Estilo Liquid Glass */
         .filter-group select { 
-            padding: 10px 0; 
-            border: none;
-            border-bottom: 1px solid #CBD5E1; 
+            padding: 12px 35px 12px 16px; 
+            border: 1px solid rgba(10, 25, 47, 0.06);
+            border-bottom: 2px solid rgba(197, 168, 128, 0.4); 
             border-radius: 0px; 
             font-family: var(--font-gilroy), sans-serif; 
             font-weight: 500;
@@ -109,11 +111,19 @@
             outline: none; 
             cursor: pointer; 
             color: var(--primary-color);
-            background-color: transparent;
-            transition: border-color 0.4s ease;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230A192F' d='M0 0l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
         }
-        .filter-group select:focus {
+        .filter-group select:focus, .filter-group select:hover {
             border-color: var(--secondary-color);
+            background: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.03);
         }
 
         /* Rango de Precios Minimalista */
@@ -127,11 +137,11 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique */
+        /* Ordenamiento Tipo Boutique - Dorado en Hover y Active */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
-            padding: 10px 0; 
+            padding: 11px 0; 
             border: none;
             border-bottom: 1px solid #CBD5E1;
             background: transparent; 
@@ -146,8 +156,8 @@
             text-align: left;
         }
         .btn-sort:hover, .btn-sort.active { 
-            color: var(--primary-color);
-            border-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
             font-weight: 700;
         }
 
@@ -376,14 +386,10 @@
         .next { right: 10px; }
 
         .info-area { flex: 1; padding: 50px; background: white; overflow-y: auto; }
-        
-        /* Botón de escape exclusivo para móvil, oculto en desktop por defecto */
-        .btn-back-mobile {
-            display: none;
-        }
-
+        .btn-back-mobile { display: none; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0; }
         
+        /* Botones Simulador - Cambian a Dorado en Hover y Active */
         .btn-pago { 
             border: 1px solid var(--border-light); 
             padding: 16px 12px; 
@@ -394,17 +400,19 @@
             font-family: var(--font-gilroy), sans-serif;
             font-weight: 500; 
             font-size: 11px; 
-            transition: all 0.4s ease; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
             line-height: 1.6; 
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
         .btn-pago:hover, .btn-pago.active { 
-            background: var(--primary-color); 
+            background: var(--secondary-color); 
             color: white; 
-            border-color: var(--primary-color);
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(197, 168, 128, 0.2);
         }
         
+        /* Boton Captura - Cambia a Dorado en Hover */
         .btn-capture { 
             width: 100%; 
             background: var(--primary-color); 
@@ -423,9 +431,13 @@
             gap: 12px; 
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
         }
-        .btn-capture:hover { background: var(--secondary-color); border-color: var(--secondary-color); }
+        .btn-capture:hover { 
+            background: var(--secondary-color); 
+            border-color: var(--secondary-color); 
+            box-shadow: 0 5px 20px rgba(197, 168, 128, 0.25);
+        }
         
         .result-card { margin-top: 35px; display: none; border-top: 1px solid var(--primary-color); padding-top: 25px; font-size: 14px;}
         .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #4A5568; font-weight: 300; }
@@ -442,7 +454,7 @@
             .filters { padding: 40px 20px; gap: 25px; }
             .filter-group { min-width: 100%; max-width: 100%; }
             .filter-group label { font-size: 11px; }
-            .filter-group select { font-size: 14px; }
+            .filter-group select { font-size: 14px; padding: 12px 16px; }
             
             .stats-bar { padding: 40px 20px; }
             .stats-main { font-size: 18px; }
@@ -463,10 +475,8 @@
                 max-height: 100vh; 
             } 
             .carousel-area { min-height: 320px; max-height: 320px; border-right: none; border-bottom: 1px solid var(--border-light); padding: 10px; } 
-            
             .info-area { padding: 30px 20px; }
             
-            /* Despliegue estricto del botón volver en móviles */
             .btn-back-mobile {
                 display: inline-flex;
                 align-items: center;
@@ -524,7 +534,6 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
-                <!-- Botón Volver exclusivo móvil -->
                 <button class="btn-back-mobile" onclick="closeModal()">← Volver al inventario</button>
                 
                 <h2 id="modal-title" style="font-family: var(--font-gilroy), sans-serif; font-size: 32px; font-weight: 500; margin-top: 0; color: var(--primary-color); letter-spacing: 0.5px;">Unidad</h2>
