@@ -9,8 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,400&display=swap');
-
         :root {
             --primary-color: #0A192F;
             --secondary-color: #C5A880; 
@@ -20,6 +18,11 @@
             --accent-blue: #1A2E40;
             --obra-bg: #F7F8FA;
             --border-light: #E5E7EB;
+
+            /* Tipografías Premium Solicitadas */
+            --font-extended: 'TRADE GOTHIC LT STD EXTENDED', 'Trade Gothic Extended', 'Arial Black', sans-serif;
+            --font-trade: 'Trade Gothic Lt Std', 'Trade Gothic', sans-serif;
+            --font-gilroy: 'GILROY', 'Gilroy-Medium', 'Helvetica Neue', sans-serif;
         }
 
         /* Bloqueo absoluto de scroll horizontal y zoom inverso */
@@ -34,6 +37,8 @@
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            font-family: var(--font-gilroy), sans-serif;
+            font-weight: 300;
         }
 
         *, *:before, *:after {
@@ -48,20 +53,21 @@
             border-bottom: 1px solid rgba(197, 168, 128, 0.3); 
         }
         header h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-weight: 300; 
+            font-family: var(--font-extended), sans-serif;
+            font-weight: 700; 
             letter-spacing: 8px; 
             margin: 0; 
-            font-size: 38px; 
+            font-size: 40px; 
             text-transform: uppercase; 
         }
         header p { 
-            font-size: 10px; 
+            font-family: var(--font-extended), sans-serif;
+            font-size: 11px; 
             letter-spacing: 10px; 
             margin-top: 18px; 
             color: var(--secondary-color); 
             text-transform: uppercase; 
-            font-weight: 300; 
+            font-weight: 400; 
         }
 
         /* Contenedor de Filtros Lineal y Cuadrado */
@@ -80,23 +86,25 @@
             display: flex; 
             flex-direction: column; 
             flex: 1;
-            min-width: 200px; 
+            min-width: 220px; 
             max-width: 280px;
         }
         .filter-group label { 
-            font-weight: 400; 
+            font-family: var(--font-extended), sans-serif;
+            font-weight: 700; 
             color: #718096; 
             margin-bottom: 10px; 
             font-size: 11px; 
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
         }
         .filter-group select { 
             padding: 10px 0; 
             border: none;
             border-bottom: 1px solid #CBD5E1; 
             border-radius: 0px; 
-            font-family: 'Montserrat', sans-serif; 
+            font-family: var(--font-gilroy), sans-serif; 
+            font-weight: 500;
             font-size: 14px; 
             outline: none; 
             cursor: pointer; 
@@ -128,8 +136,8 @@
             border-bottom: 1px solid #CBD5E1;
             background: transparent; 
             color: #718096; 
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 12px; 
+            font-family: var(--font-extended), sans-serif; 
+            font-size: 11px; 
             font-weight: 400; 
             cursor: pointer; 
             transition: all 0.3s ease; 
@@ -140,7 +148,7 @@
         .btn-sort:hover, .btn-sort.active { 
             color: var(--primary-color);
             border-color: var(--primary-color);
-            font-weight: 500;
+            font-weight: 700;
         }
 
         /* Dashboard de Alta Gama */
@@ -156,13 +164,14 @@
             text-align: center;
         }
         .stats-main { 
-            font-family: 'Playfair Display', serif;
-            font-size: 24px; 
-            font-weight: 300; 
+            font-family: var(--font-extended), sans-serif;
+            font-size: 22px; 
+            font-weight: 700; 
             display: block; 
             margin-bottom: 30px; 
             letter-spacing: 2px;
             color: var(--primary-color);
+            text-transform: uppercase;
         }
         .dashboard-grid { 
             display: grid;
@@ -213,17 +222,17 @@
         }
 
         .dashboard-value {
-            font-family: 'Playfair Display', serif;
+            font-family: var(--font-extended), sans-serif;
             font-size: 34px;
-            font-weight: 300;
+            font-weight: 700;
             color: var(--primary-color);
             margin-bottom: 10px;
             letter-spacing: 0.5px;
         }
         .dashboard-label {
-            font-family: 'Montserrat', sans-serif;
+            font-family: var(--font-gilroy), sans-serif;
+            font-weight: 500;
             font-size: 11px;
-            font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: #718096;
@@ -272,25 +281,26 @@
         }
         .card-content { padding: 20px 0; text-align: left; }
         .card-title { 
-            font-family: 'Playfair Display', serif; 
+            font-family: var(--font-gilroy), sans-serif; 
             font-size: 24px; 
-            font-weight: 400; 
+            font-weight: 500; 
             color: var(--primary-color); 
             margin: 0 0 8px 0; 
             letter-spacing: 0.5px;
         }
         .card-details { 
-            font-family: 'Montserrat', sans-serif; 
+            font-family: var(--font-gilroy), sans-serif; 
             font-size: 12px; 
+            font-weight: 300; 
             color: #718096; 
             margin-bottom: 12px; 
             letter-spacing: 1px;
             text-transform: uppercase;
         }
         .card-price { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 22px; 
-            font-weight: 400; 
+            font-family: var(--font-gilroy), sans-serif; 
+            font-size: 20px; 
+            font-weight: 500; 
             color: var(--secondary-color); 
             letter-spacing: 0.5px; 
         }
@@ -366,6 +376,12 @@
         .next { right: 10px; }
 
         .info-area { flex: 1; padding: 50px; background: white; overflow-y: auto; }
+        
+        /* Botón de escape exclusivo para móvil, oculto en desktop por defecto */
+        .btn-back-mobile {
+            display: none;
+        }
+
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0; }
         
         .btn-pago { 
@@ -375,8 +391,8 @@
             cursor: pointer; 
             color: var(--primary-color); 
             background: white; 
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400; 
+            font-family: var(--font-gilroy), sans-serif;
+            font-weight: 500; 
             font-size: 11px; 
             transition: all 0.4s ease; 
             line-height: 1.6; 
@@ -396,9 +412,9 @@
             border: 1px solid var(--primary-color);
             padding: 18px; 
             border-radius: 0px; 
-            font-family: 'Montserrat', sans-serif;
+            font-family: var(--font-extended), sans-serif;
             font-size: 12px;
-            font-weight: 400; 
+            font-weight: 700; 
             cursor: pointer; 
             margin-top: 30px; 
             display: flex; 
@@ -413,21 +429,30 @@
         
         .result-card { margin-top: 35px; display: none; border-top: 1px solid var(--primary-color); padding-top: 25px; font-size: 14px;}
         .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #4A5568; font-weight: 300; }
-        .res-row span:last-child { font-weight: 400; color: var(--text-color); }
+        .res-row span:last-child { font-weight: 500; color: var(--text-color); }
         
-        .obra-block { background: var(--obra-bg); padding: 20px; border-radius: 0px; margin: 20px 0; border-left: 1px solid var(--secondary-color); }
+        .obra-block { background: var(--obra-bg); padding: 20px; border-radius: 0px; margin: 20px 0; border-left: 2px solid var(--secondary-color); }
 
         /* Adaptación móvil estricta libre de desbordamientos o zoom inverso */
         @media (max-width: 900px) { 
-            .filters { padding: 30px 20px; gap: 25px; }
+            header { padding: 70px 20px; }
+            header h1 { font-size: 28px; }
+            header p { font-size: 10px; letter-spacing: 8px; }
+
+            .filters { padding: 40px 20px; gap: 25px; }
             .filter-group { min-width: 100%; max-width: 100%; }
+            .filter-group label { font-size: 11px; }
+            .filter-group select { font-size: 14px; }
             
             .stats-bar { padding: 40px 20px; }
+            .stats-main { font-size: 18px; }
             .dashboard-grid { grid-template-columns: 1fr; border: 1px solid var(--border-light); }
             .dashboard-item { border-right: none; border-bottom: 1px solid var(--border-light); padding: 30px 20px; }
             .dashboard-item:last-child { border-bottom: none; }
+            .dashboard-value { font-size: 28px; }
             
             .catalog-grid { padding: 40px 20px; gap: 40px; }
+            .card-title { font-size: 22px; }
             
             .modal-content { 
                 flex-direction: column; 
@@ -438,8 +463,30 @@
                 max-height: 100vh; 
             } 
             .carousel-area { min-height: 320px; max-height: 320px; border-right: none; border-bottom: 1px solid var(--border-light); padding: 10px; } 
+            
             .info-area { padding: 30px 20px; }
-            .close { top: 15px; right: 20px; font-size: 32px; color: var(--primary-color); }
+            
+            /* Despliegue estricto del botón volver en móviles */
+            .btn-back-mobile {
+                display: inline-flex;
+                align-items: center;
+                background: transparent;
+                border: none;
+                color: var(--secondary-color);
+                font-family: var(--font-extended), sans-serif;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                cursor: pointer;
+                padding: 0 0 15px 0;
+                text-transform: uppercase;
+                width: 100%;
+                border-bottom: 1px solid var(--border-light);
+                margin-bottom: 25px;
+            }
+
+            .close { top: 15px; right: 20px; font-size: 26px; color: var(--primary-color); }
+            .btn-grid { gap: 12px; }
         }
     </style>
 </head>
@@ -477,9 +524,12 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
-                <h2 id="modal-title" style="font-family:'Playfair Display', serif; font-size: 34px; font-weight: 300; margin-top: 0; color: var(--primary-color); letter-spacing: 0.5px;">Unidad</h2>
-                <div id="m-data" style="font-size:13px; line-height: 2; margin-bottom:30px; color: #4A5568; letter-spacing: 0.3px;"></div>
-                <div style="font-weight:500; font-size:11px; text-transform:uppercase; margin-top:10px; letter-spacing: 2px; color: var(--primary-color);">Esquemas de Inversión</div>
+                <!-- Botón Volver exclusivo móvil -->
+                <button class="btn-back-mobile" onclick="closeModal()">← Volver al inventario</button>
+                
+                <h2 id="modal-title" style="font-family: var(--font-gilroy), sans-serif; font-size: 32px; font-weight: 500; margin-top: 0; color: var(--primary-color); letter-spacing: 0.5px;">Unidad</h2>
+                <div id="m-data" style="font-size:14px; line-height: 2; margin-bottom:30px; color: #4A5568; letter-spacing: 0.3px;"></div>
+                <div style="font-family: var(--font-extended), sans-serif; font-weight:700; font-size:11px; text-transform:uppercase; margin-top:10px; letter-spacing: 2px; color: var(--primary-color);">Esquemas de Inversión</div>
                 <div class="btn-grid">
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0, 0.7, 0, 'Plan 30% / 70%')">30% Enganche<br>70% Entrega</button>
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
@@ -487,21 +537,21 @@
                     <button class="btn-pago" onclick="runCalc(this, 0.8, 0, 0.2, 0.12, 'Plan 80/20')">80% Enganche<br>20% Ent (12% Desc)</button>
                 </div>
                 <div class="result-card" id="res-card">
-                    <div style="color:var(--secondary-color); font-size:22px; font-weight:400; margin-bottom:20px; font-family:'Playfair Display', serif; letter-spacing: 0.5px;" id="res-plan-name"></div>
+                    <div style="color:var(--secondary-color); font-size:22px; font-weight:500; margin-bottom:20px; font-family: var(--font-gilroy), sans-serif; letter-spacing: 0.5px;" id="res-plan-name"></div>
                     <div class="res-row"><span>Precio de Lista:</span><span id="res-list"></span></div>
-                    <div id="row-desc" class="res-row" style="display:none; color:#c53030; font-weight:400;"><span>Ahorro Directo:</span><span id="res-desc-val" style="color:#c53030; font-weight:500;"></span></div>
+                    <div id="row-desc" class="res-row" style="display:none; color:#c53030; font-weight:500;"><span>Ahorro Directo:</span><span id="res-desc-val" style="color:#c53030; font-weight:500;"></span></div>
                     <div class="res-row"><span>Enganche Inicial:</span><span id="res-down"></span></div>
                     
                     <div id="obra-block" class="obra-block" style="display:none;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568; font-weight: 300; font-size: 13px;"><span>Estructura en Obra:</span><span id="res-obra-total" style="font-weight:400; color:var(--text-color);"></span></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568; font-weight: 300; font-size: 14px;"><span>Estructura en Obra:</span><span id="res-obra-total" style="font-weight:500; color:var(--text-color);"></span></div>
                         <div style="display:flex; justify-content:space-between; align-items:center; color:var(--accent-blue);">
-                            <span style="font-size:11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 400;" id="res-months-label">mensualidades:</span>
-                            <span style="font-family:'Playfair Display', serif; font-weight: 400; font-size: 20px;" id="res-monthly-val"></span>
+                            <span style="font-family: var(--font-extended), sans-serif; font-size:11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;" id="res-months-label">mensualidades:</span>
+                            <span style="font-family: var(--font-extended), sans-serif; font-weight: 700; font-size: 20px;" id="res-monthly-val"></span>
                         </div>
                     </div>
                     
                     <div class="res-row"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
-                    <div style="border-top:1px solid var(--border-light); padding-top:20px; margin-top:20px; font-weight:400; font-size:22px; display:flex; justify-content:space-between; color: var(--primary-color); font-family:'Playfair Display', serif;"><span>Inversión Final:</span><span id="res-total" style="color: var(--primary-color); font-weight: 400;"></span></div>
+                    <div style="border-top:1px solid var(--border-light); padding-top:20px; margin-top:20px; font-weight:500; font-size:22px; display:flex; justify-content:space-between; color: var(--primary-color); font-family: var(--font-gilroy), sans-serif;"><span>Inversión Final:</span><span id="res-total" style="color: var(--primary-color); font-weight: 500;"></span></div>
                     <div style="font-size:11px; color:#718096; font-style:italic; margin-top:20px; letter-spacing: 0.3px;" id="res-note"></div>
                 </div>
                 <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Exportar Ficha Comercial</button>
@@ -559,11 +609,11 @@
                     <span class="stats-main">Tablero de Control & Disponibilidad</span>
                     <div class="dashboard-grid">
                         <div class="dashboard-item" id="dash-torre-a" onclick="dashboardFilter('torre', 'A')">
-                            <div class="dashboard-value">${soldA} <span style="font-size:13px; color:#718096; font-weight:300;">(${((soldA/190)*100).toFixed(0)}%)</span></div>
+                            <div class="dashboard-value">${soldA} <span style="font-size:14px; color:#718096; font-weight:300;">(${((soldA/190)*100).toFixed(0)}%)</span></div>
                             <div class="dashboard-label">Torre A Comercializada</div>
                         </div>
                         <div class="dashboard-item" id="dash-torre-b" onclick="dashboardFilter('torre', 'B')">
-                            <div class="dashboard-value">${soldB} <span style="font-size:13px; color:#718096; font-weight:300;">(${((soldB/190)*100).toFixed(0)}%)</span></div>
+                            <div class="dashboard-value">${soldB} <span style="font-size:14px; color:#718096; font-weight:300;">(${((soldB/190)*100).toFixed(0)}%)</span></div>
                             <div class="dashboard-label">Torre B Comercializada</div>
                         </div>
                         <div class="dashboard-item dashboard-highlight" id="dash-reset" onclick="dashboardFilter('reset', '')">
@@ -667,7 +717,7 @@
             const carousel = document.getElementById('carousel-images');
 
             document.getElementById('modal-title').innerText = `Residencia ${item.u}`;
-            document.getElementById('m-data').innerHTML = `<b>Torre ${item.t}</b> &nbsp;&bull;&nbsp; Arquitectura Modelo ${item.m}<br>Orientación de Vista: ${item.v}<br>Horizonte de Entrega: ${item.t === 'A' ? 'Diciembre 2028' : 'Julio 2029'}<br><br><span style="font-family:'Playfair Display'; color:var(--primary-color); font-size: 24px;">${item.p}</span>`;
+            document.getElementById('m-data').innerHTML = `<b>Torre ${item.t}</b> &nbsp;&bull;&nbsp; Arquitectura Modelo ${item.m}<br>Orientación de Vista: ${item.v}<br>Horizonte de Entrega: ${item.t === 'A' ? 'Diciembre 2028' : 'Julio 2029'}<br><br><span style="font-family: var(--font-gilroy); font-weight: 500; color:var(--primary-color); font-size: 22px;">${item.p}</span>`;
             
             carousel.innerHTML = `<button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
             
@@ -715,7 +765,7 @@
         
         document.querySelectorAll('select').forEach(s => s.addEventListener('change', applyFiltersAndSort));
 
-        /* Cierre de modal inteligente al dar clic en el espacio vacío exterior */
+        /* Cierre de modal al dar clic en el espacio vacío exterior */
         window.addEventListener('click', e => { 
             if (e.target === document.getElementById('unitModal')) closeModal(); 
         });
