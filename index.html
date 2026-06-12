@@ -99,9 +99,9 @@
             letter-spacing: 1.5px;
         }
         
-        /* Menus Desplegables Estilo Liquid Glass - Alineación Izquierda y Máxima Transparencia */
+        /* Menus Desplegables Estilo Liquid Glass Avanzado */
         .filter-group select { 
-            padding: 12px 30px 12px 0px; /* Alineación perfecta al borde izquierdo bajo el label */
+            padding: 12px 30px 12px 0px; 
             border: none;
             border-bottom: 2px solid rgba(197, 168, 128, 0.4); 
             border-radius: 0px; 
@@ -111,21 +111,20 @@
             outline: none; 
             cursor: pointer; 
             color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.02); /* Super transparente maravilloso */
+            background: transparent; /* Transparencia total premium */
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             appearance: none;
-            text-align: left;      /* Alineación estricta a la izquierda */
+            text-align: left;      
             text-align-last: left; 
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230A192F' d='M0 0l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
-            background-position: right 4px center; /* Flecha arquitectónica al extremo derecho */
+            background-position: right 4px center; 
         }
         .filter-group select:focus, .filter-group select:hover {
             border-color: var(--secondary-color);
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.01);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Rango de Precios Minimalista */
@@ -139,7 +138,7 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique */
+        /* Ordenamiento Tipo Boutique - Centrado según image_5a1da5.png */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
@@ -155,7 +154,7 @@
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: left;
+            text-align: center; /* Centrado estricto solicitado */
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -518,7 +517,7 @@
         </div>
 
         <div class="filter-group">
-            <label>Ordenar Por Precio</label>
+            <label style="text-align: center;">Ordenar Por Precio</label>
             <div class="sort-container">
                 <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
                 <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
@@ -590,6 +589,7 @@
             applyFiltersAndSort();
         });
 
+        // Configura el Rango basado en los datos del Sheet
         function setupPriceSlider() {
             const numericPrices = inventory.map(i => parsePrice(i.p)).filter(p => !isNaN(p));
             if (numericPrices.length > 0) {
