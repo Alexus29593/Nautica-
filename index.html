@@ -356,7 +356,7 @@
         
         .carousel-area { 
             flex: 1.3; 
-            background-color: #FFFFFF; 
+            background-color: #FFFFFF !important; /* Forzado de color sólido libre de transparencias */
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -445,7 +445,7 @@
         
         .obra-block { background: var(--obra-bg); padding: 20px; border-radius: 0px; margin: 20px 0; border-left: 2px solid var(--secondary-color); }
 
-        /* Adaptación móvil estricta libre de desbordamientos o zoom inverso */
+        /* Adaptación móvil estricta */
         @media (max-width: 900px) { 
             header { padding: 70px 20px; }
             header h1 { font-size: 28px; }
@@ -474,7 +474,7 @@
                 max-width: 100vw; 
                 max-height: 100vh; 
             } 
-            .carousel-area { min-height: 320px; max-height: 320px; border-right: none; border-bottom: 1px solid var(--border-light); padding: 10px; } 
+            .carousel-area { min-height: 320px; max-height: 320px; border-right: none; border-bottom: 1px solid var(--border-light); padding: 10px; background-color: #FFFFFF !important;} 
             .info-area { padding: 30px 20px; }
             
             .btn-back-mobile {
@@ -534,7 +534,7 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
-                <button class="btn-back-mobile" onclick="closeModal()">← Volver al inventario</button>
+                <button class="btn-back-mobile" onclick="closeModal()"><!-- Arrow back icon placeholder -->← Volver al inventario</button>
                 
                 <h2 id="modal-title" style="font-family: var(--font-gilroy), sans-serif; font-size: 32px; font-weight: 500; margin-top: 0; color: var(--primary-color); letter-spacing: 0.5px;">Unidad</h2>
                 <div id="m-data" style="font-size:14px; line-height: 2; margin-bottom:30px; color: #4A5568; letter-spacing: 0.3px;"></div>
@@ -761,30 +761,81 @@
             document.getElementById('res-card').style.display = 'block';
         }
 
-        // Optimización avanzada para máxima nitidez sin opacar o perder definición
+        // Lógica de captura optimizada para desenrollar scroll vertical en móviles y eliminar transparencias
         async function generarCaptura() {
-            const area = document.getElementById('capture-area'), btn = document.getElementById('btn-screenshot'), cl = document.querySelector('.close'), nv = document.querySelectorAll('.nav-btn');
+            const area = document.getElementById('capture-area');
+            const btn = document.getElementById('btn-screenshot');
+            const cl = document.querySelector('.close');
+            const nv = document.querySelectorAll('.nav-btn');
+            const backBtn = document.querySelector('.btn-back-mobile');
             
-            // Ocultamos elementos de navegación e interfaz interactiva temporalmente
-            btn.style.display = 'none'; cl.style.display = 'none'; nv.forEach(n => n.style.display = 'none');
+            // Ocultamos elementos interactivos para la ficha limpia
+            btn.style.display = 'none'; 
+            cl.style.display = 'none'; 
+            nv.forEach(n => n.style.display = 'none');
+            if (backBtn) backBtn.style.display = 'none';
+
+            // Almacenar estilos originales de maquetación móvil
+            const originalWidth = area.style.width;
+            const originalHeight = area.style.height;
+            const originalMaxHeight = area.style.maxHeight;
+            const originalOverflow = area.style.overflow;
             
-            // html2canvas con esteroides de resolución (MÁXIMA NITIDEZ ULTRA-HD)
+            // Expandir la interfaz móvil de forma completa si se ejecuta en pantallas pequeñas (Anti-Recortes)
+            if (window.innerWidth <= 900) {
+                area.style.width = '100%';
+                area.style.height = 'auto';
+                area.style.maxHeight = 'none';
+                area.style.overflow = 'visible';
+                
+                const infoArea = document.querySelector('.info-area');
+                if (infoArea) {
+                    infoArea.style.height = 'auto';
+                    infoArea.style.maxHeight = 'none';
+                    infoArea.style.overflow = 'visible';
+                }
+            }
+
+            // Aseguramos un lienzo completamente opaco, nítido y libre de interferencias traslúcidas
+            const carouselArea = document.getElementById('carousel-images');
+            if (carouselArea) carouselArea.style.backgroundColor = '#FFFFFF';
+
             const canvas = await html2canvas(area, { 
-                scale: 3,             // Forzamos renderizado a 3x (Resolución quirúrgica perfecta)
-                useCORS: true,         // Permite cargar recursos de forma asíncrona sin perder calidad
+                scale: 3,             // Nitidez quirúrgica Ultra-HD
+                useCORS: true, 
                 backgroundColor: "#FFFFFF", 
-                logging: false,        // Deshabilitamos logs para liberar memoria de procesamiento
-                letterRendering: true, // Renderizado exacto de tipografías Trade Gothic y Gilroy
-                imageTimeout: 0        // Evitamos que aborte o reduzca la calidad si las imágenes tardan en procesar
+                logging: false,
+                letterRendering: true,
+                imageTimeout: 0,
+                windowWidth: area.scrollWidth,
+                windowHeight: area.scrollHeight
             });
             
             const link = document.createElement('a'); 
             link.download = `Nautica_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.png`; 
-            link.href = canvas.toDataURL('image/png', 1.0); // Forzamos calidad máxima de exportación PNG (1.0)
+            link.href = canvas.toDataURL('image/png', 1.0); 
             link.click();
             
-            // Restauramos la interfaz interactiva original
-            btn.style.display = 'flex'; cl.style.display = 'block'; nv.forEach(n => n.style.display = 'block');
+            // Restauración inmediata de la estructura móvil original
+            area.style.width = originalWidth;
+            area.style.height = originalHeight;
+            area.style.maxHeight = originalMaxHeight;
+            area.style.overflow = originalOverflow;
+            
+            if (window.innerWidth <= 900) {
+                const infoArea = document.querySelector('.info-area');
+                if (infoArea) {
+                    infoArea.style.height = '';
+                    infoArea.style.maxHeight = '';
+                    infoArea.style.overflow = '';
+                }
+            }
+
+            // Devolver la interfaz interactiva normal a la pantalla
+            btn.style.display = 'flex'; 
+            cl.style.display = 'block'; 
+            nv.forEach(n => n.style.display = 'block');
+            if (backBtn) backBtn.style.display = 'inline-flex';
         }
 
         function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
