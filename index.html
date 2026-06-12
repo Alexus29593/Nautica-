@@ -48,7 +48,7 @@
         header { 
             background-color: var(--primary-color); 
             color: white; 
-            padding: 85px 20px; 
+            padding: 80px 20px; 
             text-align: center; 
             border-bottom: 1px solid rgba(197, 168, 128, 0.3); 
         }
@@ -57,12 +57,12 @@
             font-weight: 700; 
             letter-spacing: 8px; 
             margin: 0; 
-            font-size: 42px; 
+            font-size: 40px; 
             text-transform: uppercase; 
         }
         header p { 
             font-family: var(--font-extended), sans-serif;
-            font-size: 12px; 
+            font-size: 11px; 
             letter-spacing: 10px; 
             margin-top: 18px; 
             color: var(--secondary-color); 
@@ -99,33 +99,33 @@
             letter-spacing: 1.5px;
         }
         
-        /* Menus Desplegables Estilo Liquid Glass - Centrados, Grandes y Transparentes */
+        /* Menus Desplegables Estilo Liquid Glass - Alineación Izquierda y Máxima Transparencia */
         .filter-group select { 
-            padding: 12px 30px 12px 30px; 
-            border: 1px solid rgba(10, 25, 47, 0.04);
-            border-bottom: 2px solid rgba(197, 168, 128, 0.5); 
+            padding: 12px 30px 12px 0px; /* Alineación perfecta al borde izquierdo bajo el label */
+            border: none;
+            border-bottom: 2px solid rgba(197, 168, 128, 0.4); 
             border-radius: 0px; 
             font-family: var(--font-gilroy), sans-serif; 
             font-weight: 500;
-            font-size: 16px; /* Letra más grande y legible */
+            font-size: 15px; 
             outline: none; 
             cursor: pointer; 
             color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.18); /* Liquid glass premium ultra transparente */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.02); /* Super transparente maravilloso */
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             appearance: none;
-            text-align: center;      /* Centrado estricto de opciones */
-            text-align-last: center; /* Centrado de la opción activa en pantalla */
+            text-align: left;      /* Alineación estricta a la izquierda */
+            text-align-last: left; 
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230A192F' d='M0 0l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
-            background-position: right 14px center;
+            background-position: right 4px center; /* Flecha arquitectónica al extremo derecho */
         }
         .filter-group select:focus, .filter-group select:hover {
             border-color: var(--secondary-color);
-            background: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.02);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.01);
         }
 
         /* Rango de Precios Minimalista */
@@ -155,7 +155,7 @@
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: center;
+            text-align: left;
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -454,7 +454,7 @@
             .filters { padding: 40px 20px; gap: 25px; }
             .filter-group { min-width: 100%; max-width: 100%; }
             .filter-group label { font-size: 11px; }
-            .filter-group select { font-size: 15px; padding: 12px 16px; }
+            .filter-group select { font-size: 14px; padding: 12px 0px 12px 0px; background-position: right 4px center; }
             
             .stats-bar { padding: 40px 20px; }
             .stats-main { font-size: 18px; }
@@ -518,7 +518,7 @@
         </div>
 
         <div class="filter-group">
-            <label style="text-align: center;">Ordenar Por Precio</label>
+            <label>Ordenar Por Precio</label>
             <div class="sort-container">
                 <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
                 <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
