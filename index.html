@@ -99,7 +99,7 @@
             letter-spacing: 1.5px;
         }
         
-        /* Menus Desplegables Estilo Liquid Glass Avanzado */
+        /* Menus Desplegables Estilo Liquid Glass */
         .filter-group select { 
             padding: 12px 30px 12px 0px; 
             border: none;
@@ -111,7 +111,7 @@
             outline: none; 
             cursor: pointer; 
             color: var(--primary-color);
-            background: transparent; /* Transparencia total premium */
+            background: transparent; 
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -124,7 +124,8 @@
         }
         .filter-group select:focus, .filter-group select:hover {
             border-color: var(--secondary-color);
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.01);
         }
 
         /* Rango de Precios Minimalista */
@@ -138,7 +139,7 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique - Centrado según image_5a1da5.png */
+        /* Ordenamiento Tipo Boutique */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
@@ -154,7 +155,7 @@
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: center; /* Centrado estricto solicitado */
+            text-align: left;
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -517,7 +518,7 @@
         </div>
 
         <div class="filter-group">
-            <label style="text-align: center;">Ordenar Por Precio</label>
+            <label>Ordenar Por Precio</label>
             <div class="sort-container">
                 <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
                 <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
@@ -589,7 +590,6 @@
             applyFiltersAndSort();
         });
 
-        // Configura el Rango basado en los datos del Sheet
         function setupPriceSlider() {
             const numericPrices = inventory.map(i => parsePrice(i.p)).filter(p => !isNaN(p));
             if (numericPrices.length > 0) {
@@ -761,11 +761,29 @@
             document.getElementById('res-card').style.display = 'block';
         }
 
+        // Optimización avanzada para máxima nitidez sin opacar o perder definición
         async function generarCaptura() {
             const area = document.getElementById('capture-area'), btn = document.getElementById('btn-screenshot'), cl = document.querySelector('.close'), nv = document.querySelectorAll('.nav-btn');
+            
+            // Ocultamos elementos de navegación e interfaz interactiva temporalmente
             btn.style.display = 'none'; cl.style.display = 'none'; nv.forEach(n => n.style.display = 'none');
-            const canvas = await html2canvas(area, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" });
-            const link = document.createElement('a'); link.download = `Nautica_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.png`; link.href = canvas.toDataURL('image/png'); link.click();
+            
+            // html2canvas con esteroides de resolución (MÁXIMA NITIDEZ ULTRA-HD)
+            const canvas = await html2canvas(area, { 
+                scale: 3,             // Forzamos renderizado a 3x (Resolución quirúrgica perfecta)
+                useCORS: true,         // Permite cargar recursos de forma asíncrona sin perder calidad
+                backgroundColor: "#FFFFFF", 
+                logging: false,        // Deshabilitamos logs para liberar memoria de procesamiento
+                letterRendering: true, // Renderizado exacto de tipografías Trade Gothic y Gilroy
+                imageTimeout: 0        // Evitamos que aborte o reduzca la calidad si las imágenes tardan en procesar
+            });
+            
+            const link = document.createElement('a'); 
+            link.download = `Nautica_${document.getElementById('modal-title').innerText.replace(/\s+/g,'_')}.png`; 
+            link.href = canvas.toDataURL('image/png', 1.0); // Forzamos calidad máxima de exportación PNG (1.0)
+            link.click();
+            
+            // Restauramos la interfaz interactiva original
             btn.style.display = 'flex'; cl.style.display = 'block'; nv.forEach(n => n.style.display = 'block');
         }
 
