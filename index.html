@@ -48,7 +48,7 @@
         header { 
             background-color: var(--primary-color); 
             color: white; 
-            padding: 80px 20px; 
+            padding: 85px 20px; 
             text-align: center; 
             border-bottom: 1px solid rgba(197, 168, 128, 0.3); 
         }
@@ -57,12 +57,12 @@
             font-weight: 700; 
             letter-spacing: 8px; 
             margin: 0; 
-            font-size: 40px; 
+            font-size: 42px; 
             text-transform: uppercase; 
         }
         header p { 
             font-family: var(--font-extended), sans-serif;
-            font-size: 11px; 
+            font-size: 12px; 
             letter-spacing: 10px; 
             margin-top: 18px; 
             color: var(--secondary-color); 
@@ -76,7 +76,7 @@
             justify-content: center; 
             gap: 40px; 
             padding: 45px 40px; 
-            background-color: #F4F5F7; /* Fondo sutil para que resalte el efecto Liquid Glass */
+            background-color: #F4F5F7; 
             flex-wrap: wrap; 
             align-items: flex-end;
             border-bottom: 1px solid var(--border-light);
@@ -94,36 +94,38 @@
             font-weight: 700; 
             color: #718096; 
             margin-bottom: 12px; 
-            font-size: 11px; 
+            font-size: 12px; 
             text-transform: uppercase;
             letter-spacing: 1.5px;
         }
         
-        /* Menus Desplegables Estilo Liquid Glass */
+        /* Menus Desplegables Estilo Liquid Glass - Centrados, Grandes y Transparentes */
         .filter-group select { 
-            padding: 12px 35px 12px 16px; 
-            border: 1px solid rgba(10, 25, 47, 0.06);
-            border-bottom: 2px solid rgba(197, 168, 128, 0.4); 
+            padding: 12px 30px 12px 30px; 
+            border: 1px solid rgba(10, 25, 47, 0.04);
+            border-bottom: 2px solid rgba(197, 168, 128, 0.5); 
             border-radius: 0px; 
             font-family: var(--font-gilroy), sans-serif; 
             font-weight: 500;
-            font-size: 14px; 
+            font-size: 16px; /* Letra más grande y legible */
             outline: none; 
             cursor: pointer; 
             color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(255, 255, 255, 0.18); /* Liquid glass premium ultra transparente */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             appearance: none;
+            text-align: center;      /* Centrado estricto de opciones */
+            text-align-last: center; /* Centrado de la opción activa en pantalla */
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230A192F' d='M0 0l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
             background-position: right 14px center;
         }
         .filter-group select:focus, .filter-group select:hover {
             border-color: var(--secondary-color);
-            background: rgba(255, 255, 255, 0.75);
-            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.03);
+            background: rgba(255, 255, 255, 0.65);
+            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.02);
         }
 
         /* Rango de Precios Minimalista */
@@ -137,7 +139,7 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique - Dorado en Hover y Active */
+        /* Ordenamiento Tipo Boutique */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
@@ -147,13 +149,13 @@
             background: transparent; 
             color: #718096; 
             font-family: var(--font-extended), sans-serif; 
-            font-size: 11px; 
+            font-size: 12px; 
             font-weight: 400; 
             cursor: pointer; 
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: left;
+            text-align: center;
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -389,7 +391,6 @@
         .btn-back-mobile { display: none; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0; }
         
-        /* Botones Simulador - Cambian a Dorado en Hover y Active */
         .btn-pago { 
             border: 1px solid var(--border-light); 
             padding: 16px 12px; 
@@ -412,7 +413,6 @@
             box-shadow: 0 4px 15px rgba(197, 168, 128, 0.2);
         }
         
-        /* Boton Captura - Cambia a Dorado en Hover */
         .btn-capture { 
             width: 100%; 
             background: var(--primary-color); 
@@ -454,7 +454,7 @@
             .filters { padding: 40px 20px; gap: 25px; }
             .filter-group { min-width: 100%; max-width: 100%; }
             .filter-group label { font-size: 11px; }
-            .filter-group select { font-size: 14px; padding: 12px 16px; }
+            .filter-group select { font-size: 15px; padding: 12px 16px; }
             
             .stats-bar { padding: 40px 20px; }
             .stats-main { font-size: 18px; }
@@ -518,7 +518,7 @@
         </div>
 
         <div class="filter-group">
-            <label>Ordenar Por Precio</label>
+            <label style="text-align: center;">Ordenar Por Precio</label>
             <div class="sort-container">
                 <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
                 <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
