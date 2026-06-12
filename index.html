@@ -9,17 +9,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 
         :root {
             --primary-color: #0A192F;
             --secondary-color: #C5A880; 
-            --bg-color: #F4F5F6;
-            --text-color: #1A1A1A;
+            --bg-color: #FBFBFC;
+            --text-color: #111111;
             --card-bg: #FFFFFF;
-            --accent-blue: #1E3345;
-            --obra-bg: #F8F9FA;
-            --border-color: #E2E8F0;
+            --accent-blue: #1A2E40;
+            --obra-bg: #F7F8FA;
+            --border-light: #E5E7EB;
         }
 
         body { 
@@ -34,187 +34,260 @@
         header { 
             background-color: var(--primary-color); 
             color: white; 
-            padding: 60px 20px; 
+            padding: 80px 20px; 
             text-align: center; 
-            border-bottom: 1px solid var(--secondary-color); 
+            border-bottom: 1px solid rgba(197, 168, 128, 0.3); 
         }
         header h1 { 
             font-family: 'Playfair Display', serif; 
-            font-weight: 400; 
-            letter-spacing: 6px; 
+            font-weight: 300; 
+            letter-spacing: 8px; 
             margin: 0; 
-            font-size: 40px; 
+            font-size: 42px; 
             text-transform: uppercase; 
         }
         header p { 
-            font-size: 11px; 
-            letter-spacing: 8px; 
-            margin-top: 15px; 
+            font-size: 10px; 
+            letter-spacing: 10px; 
+            margin-top: 18px; 
             color: var(--secondary-color); 
             text-transform: uppercase; 
             font-weight: 300; 
         }
 
-        /* Contenedor de Filtros Estilo Editorial */
+        /* Contenedor de Filtros de Alta Gama */
         .filters { 
             display: flex; 
             justify-content: center; 
-            gap: 30px; 
-            padding: 30px 20px; 
+            gap: 45px; 
+            padding: 40px 40px; 
             background-color: white; 
             flex-wrap: wrap; 
             align-items: flex-end;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-light);
         }
         .filter-group { 
             display: flex; 
             flex-direction: column; 
-            min-width: 220px; 
+            min-width: 200px; 
         }
         .filter-group label { 
-            font-weight: 500; 
-            color: var(--primary-color); 
-            margin-bottom: 8px; 
-            font-size: 12px; 
+            font-weight: 400; 
+            color: #718096; 
+            margin-bottom: 10px; 
+            font-size: 11px; 
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
         .filter-group select { 
-            padding: 12px; 
-            border: 1px solid var(--border-color); 
+            padding: 10px 0; 
+            border: none;
+            border-bottom: 1px solid #CBD5E1; 
             border-radius: 0px; 
             font-family: 'Montserrat', sans-serif; 
             font-size: 14px; 
             outline: none; 
             cursor: pointer; 
-            color: #4A5568;
-            background-color: #FFF;
-            transition: border-color 0.3s;
+            color: var(--primary-color);
+            background-color: transparent;
+            transition: border-color 0.4s ease;
         }
         .filter-group select:focus {
             border-color: var(--secondary-color);
         }
 
-        /* Barra de Rango Minimalista */
+        /* Rango de Precios Minimalista */
         .price-range { 
             width: 100%; 
             accent-color: var(--secondary-color); 
             cursor: pointer; 
-            height: 3px; 
-            background: var(--border-color); 
+            height: 2px; 
+            background: #E2E8F0; 
             outline: none; 
             margin-top: 15px; 
         }
         
-        /* Botones de Ordenamiento */
-        .sort-container { display: flex; gap: 1px; width: 100%; background: var(--border-color); }
+        /* Ordenamiento Tipo Boutique */
+        .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
-            padding: 12px; 
+            padding: 10px 0; 
             border: none;
-            background: white; 
-            color: var(--primary-color); 
-            border-radius: 0px; 
+            border-bottom: 1px solid #CBD5E1;
+            background: transparent; 
+            color: #718096; 
             font-family: 'Montserrat', sans-serif; 
             font-size: 12px; 
-            font-weight: 500; 
+            font-weight: 400; 
             cursor: pointer; 
-            transition: 0.3s; 
+            transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: left;
         }
         .btn-sort:hover, .btn-sort.active { 
-            background: var(--primary-color); 
-            color: white; 
-        }
-
-        /* Tablero de Ventas Elevado */
-        .stats-bar { 
-            padding: 35px 20px; 
-            background: #FFFFFF; 
-            color: var(--primary-color); 
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .stats-main { 
-            font-family: 'Playfair Display', serif;
-            font-size: 22px; 
-            font-weight: 400; 
-            display: block; 
-            margin-bottom: 20px; 
-            letter-spacing: 1px;
-        }
-        .stats-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .stat-item { 
-            background: var(--obra-bg); 
-            padding: 10px 25px; 
-            border-radius: 0px; 
-            border: 1px solid var(--border-color); 
-            font-weight: 400; 
-            font-size: 13px; 
-            letter-spacing: 0.5px;
-        }
-        .stat-highlight { 
-            border: 1px solid var(--secondary-color); 
-            background: #FFFDF9;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
             font-weight: 500;
         }
 
-        /* Grid de Catálogo Limpio */
+        /* Dashboard Interactivo de Alto Impacto */
+        .stats-bar { 
+            background: #FFFFFF; 
+            padding: 50px 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .dashboard-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .stats-main { 
+            font-family: 'Playfair Display', serif;
+            font-size: 24px; 
+            font-weight: 300; 
+            display: block; 
+            margin-bottom: 30px; 
+            letter-spacing: 2px;
+            color: var(--primary-color);
+        }
+        .dashboard-grid { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border: 1px solid var(--border-light);
+            background: white;
+            position: relative;
+        }
+        .dashboard-item { 
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background: white;
+        }
+        .dashboard-item:last-child {
+            border-right: none;
+        }
+        
+        /* Animación Micro-Interaction */
+        .dashboard-item:hover {
+            background: var(--obra-bg);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(10, 25, 47, 0.03);
+            z-index: 5;
+        }
+        
+        /* Indicadores visuales de estado activo elegante */
+        .dashboard-item.active {
+            background: #FAFAFB;
+        }
+        .dashboard-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--secondary-color);
+            transform: scaleX(0);
+            transition: transform 0.35s ease;
+        }
+        .dashboard-item.active::after {
+            transform: scaleX(1);
+        }
+
+        .dashboard-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 34px;
+            font-weight: 300;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+        .dashboard-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #718096;
+            transition: color 0.3s ease;
+        }
+        
+        /* Resaltado suave para balance visual */
+        .dashboard-highlight.active {
+            background: #FFFDF9;
+        }
+        .dashboard-highlight .dashboard-value {
+            color: var(--secondary-color);
+        }
+
+        /* Catálogo Estilo Galería */
         .catalog-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 40px; 
-            padding: 50px 40px; 
-            max-width: 1300px; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 50px; 
+            padding: 60px 40px; 
+            max-width: 1400px; 
             margin: 0 auto; 
         }
         .card { 
-            background-color: var(--card-bg); 
+            background-color: transparent; 
             border-radius: 0px; 
             overflow: hidden; 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
             cursor: pointer; 
-            border: 1px solid var(--border-color); 
+            border: none;
+            border-bottom: 1px solid transparent;
         }
         .card:hover { 
-            transform: translateY(-4px); 
-            border-color: var(--secondary-color); 
-            box-shadow: 0 12px 30px rgba(0,0,0,0.04); 
+            transform: translateY(-6px); 
+            border-bottom: 1px solid var(--secondary-color); 
         }
         .card-img-placeholder { 
             width: 100%; 
-            height: 240px; 
-            background-color: #FAFAFA; 
+            height: 260px; 
+            background-color: #FFFFFF; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            border-bottom: 1px solid #F0F0F0; 
+            transition: background 0.4s;
         }
-        .card-content { padding: 25px; text-align: left; }
+        .card:hover .card-img-placeholder {
+            background-color: #F8F9FA;
+        }
+        .card-content { padding: 20px 0; text-align: left; }
         .card-title { 
             font-family: 'Playfair Display', serif; 
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: 400; 
             color: var(--primary-color); 
-            margin: 0 0 10px 0; 
+            margin: 0 0 8px 0; 
+            letter-spacing: 0.5px;
         }
         .card-details { 
             font-family: 'Montserrat', sans-serif; 
-            font-size: 13px; 
-            color: #666; 
-            margin-bottom: 15px; 
-            letter-spacing: 0.5px;
+            font-size: 12px; 
+            color: #718096; 
+            margin-bottom: 12px; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .card-price { 
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 20px; 
+            font-family: 'Playfair Display', serif; 
+            font-size: 22px; 
             font-weight: 400; 
             color: var(--secondary-color); 
             letter-spacing: 0.5px; 
         }
 
-        /* Modal Rediseñado */
+        /* Modal Arquitectónico */
         .modal { 
             display: none; 
             position: fixed; 
@@ -223,28 +296,28 @@
             top: 0; 
             width: 100%; 
             height: 100%; 
-            background-color: rgba(10, 25, 47, 0.4); 
-            backdrop-filter: blur(8px);
+            background-color: rgba(10, 25, 47, 0.2); 
+            backdrop-filter: blur(12px);
             overflow-y: auto; 
         }
         .modal-content { 
             background-color: white; 
-            margin: 4% auto; 
+            margin: 3% auto; 
             border-radius: 0px; 
-            max-width: 1050px; 
+            max-width: 1150px; 
             display: flex; 
             flex-direction: row; 
             overflow: hidden; 
             position: relative; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.15);
         }
         .close { 
             color: var(--primary-color); 
             position: absolute; 
-            top: 20px; 
-            right: 25px; 
-            font-size: 24px; 
-            font-weight: 300; 
+            top: 25px; 
+            right: 30px; 
+            font-size: 28px; 
+            font-weight: 200; 
             cursor: pointer; 
             z-index: 50; 
             transition: color 0.3s;
@@ -252,18 +325,19 @@
         .close:hover { color: var(--secondary-color); }
         
         .carousel-area { 
-            flex: 1.2; 
-            background-color: #F8F9FA; 
+            flex: 1.3; 
+            background-color: #FFFFFF; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             position: relative; 
-            min-height: 480px; 
-            border-right: 1px solid var(--border-color);
+            min-height: 520px; 
+            border-right: 1px solid var(--border-light);
+            padding: 20px;
         }
-        .slide-img { max-width: 90%; max-height: 440px; display: none; animation: fade 0.5s ease-in-out; object-fit: contain;}
+        .slide-img { max-width: 95%; max-height: 480px; display: none; animation: fade 0.6s cubic-bezier(0.25, 1, 0.5, 1); object-fit: contain;}
         .slide-img.active { display: block; }
-        @keyframes fade { from {opacity: 0.4} to {opacity: 1} }
+        @keyframes fade { from {opacity: 0} to {opacity: 1} }
         
         .nav-btn { 
             position: absolute; 
@@ -272,33 +346,34 @@
             background: transparent; 
             color: var(--primary-color); 
             border: none; 
-            padding: 20px 15px; 
+            padding: 30px 10px; 
             cursor: pointer; 
-            font-size: 20px; 
+            font-size: 24px; 
             z-index: 40; 
             transition: 0.3s; 
+            font-weight: 300;
         }
         .nav-btn:hover { color: var(--secondary-color); }
-        .prev { left: 5px; }
-        .next { right: 5px; }
+        .prev { left: 10px; }
+        .next { right: 10px; }
 
-        .info-area { flex: 1; padding: 45px; background: white; overflow-y: auto; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .info-area { flex: 1; padding: 50px; background: white; overflow-y: auto; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0; }
         
-        /* Botones Simulador */
         .btn-pago { 
-            border: 1px solid var(--border-color); 
-            padding: 14px 10px; 
+            border: 1px solid var(--border-light); 
+            padding: 16px 12px; 
             border-radius: 0px; 
             cursor: pointer; 
             color: var(--primary-color); 
             background: white; 
-            font-weight: 500; 
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400; 
             font-size: 11px; 
-            transition: 0.3s; 
-            line-height: 1.5; 
+            transition: all 0.4s ease; 
+            line-height: 1.6; 
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
         .btn-pago:hover, .btn-pago.active { 
             background: var(--primary-color); 
@@ -308,34 +383,40 @@
         
         .btn-capture { 
             width: 100%; 
-            background: var(--secondary-color); 
+            background: var(--primary-color); 
             color: white; 
-            border: none; 
-            padding: 16px; 
+            border: 1px solid var(--primary-color);
+            padding: 18px; 
             border-radius: 0px; 
             font-family: 'Montserrat', sans-serif;
-            font-size: 13px;
-            font-weight: 500; 
+            font-size: 12px;
+            font-weight: 400; 
             cursor: pointer; 
-            margin-top: 25px; 
+            margin-top: 30px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 10px; 
+            gap: 12px; 
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: background 0.3s;
+            letter-spacing: 2px;
+            transition: all 0.3s;
         }
-        .btn-capture:hover { background: var(--primary-color); }
+        .btn-capture:hover { background: var(--secondary-color); border-color: var(--secondary-color); }
         
-        .result-card { margin-top: 30px; display: none; border-top: 1px solid var(--border-color); padding-top: 20px; font-size: 14px;}
-        .obra-block { background: var(--obra-bg); padding: 18px; border-radius: 0px; margin: 15px 0; border-left: 2px solid var(--secondary-color); }
+        .result-card { margin-top: 35px; display: none; border-top: 1px solid var(--primary-color); padding-top: 25px; font-size: 14px;}
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #4A5568; font-weight: 300; }
+        .res-row span:last-child { font-weight: 400; color: var(--text-color); }
+        
+        .obra-block { background: var(--obra-bg); padding: 20px; border-radius: 0px; margin: 20px 0; border-left: 1px solid var(--secondary-color); }
 
         @media (max-width: 900px) { 
             .modal-content { flex-direction: column; margin: 0; width: 100%; height: 100%; } 
-            .carousel-area { min-height: 320px; } 
+            .carousel-area { min-height: 350px; border-right: none; border-bottom: 1px solid var(--border-light); } 
             .filter-group { min-width: 100%; } 
-            .catalog-grid { padding: 20px; gap: 20px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .dashboard-item { border-bottom: 1px solid var(--border-light); border-right: none; }
+            .dashboard-item:last-child { border-bottom: none; }
+            .catalog-grid { padding: 30px 20px; gap: 30px; }
         }
     </style>
 </head>
@@ -352,7 +433,7 @@
         <div class="filter-group"><label>Vista</label><select id="f-vista"><option value="all">Todas</option><option value="Exterior">Exterior</option><option value="Interior">Interior</option><option value="Laguna">Laguna</option><option value="Centro de ciudad">Centro de ciudad</option></select></div>
         
         <div class="filter-group">
-            <label>Precio Máx: <span id="price-display" style="color:var(--secondary-color); font-weight: 600;">Cargando...</span></label>
+            <label>Precio Máx: <span id="price-display" style="color:var(--secondary-color); font-weight: 500;">Cargando...</span></label>
             <input type="range" id="f-precio" class="price-range">
         </div>
 
@@ -365,7 +446,7 @@
         </div>
     </div>
 
-    <div class="stats-bar" id="stats-bar">Actualizando tablero...</div>
+    <div class="stats-bar" id="stats-bar"></div>
     <div class="catalog-grid" id="catalog"></div>
 
     <div id="unitModal" class="modal">
@@ -373,9 +454,9 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="carousel-area" id="carousel-images"></div>
             <div class="info-area">
-                <h2 id="modal-title" style="font-family:'Playfair Display', serif; font-size: 34px; font-weight: 400; margin-top: 0; color: var(--primary-color);">Unidad</h2>
-                <div id="m-data" style="font-size:14px; line-height:1.9; margin-bottom:25px; color: #4A5568;"></div>
-                <div style="font-weight:500; font-size:12px; text-transform:uppercase; margin-top:10px; letter-spacing: 1px; color: var(--primary-color);">Simulador de Pagos</div>
+                <h2 id="modal-title" style="font-family:'Playfair Display', serif; font-size: 36px; font-weight: 300; margin-top: 0; color: var(--primary-color); letter-spacing: 0.5px;">Unidad</h2>
+                <div id="m-data" style="font-size:13px; line-height: 2; margin-bottom:30px; color: #4A5568; letter-spacing: 0.3px;"></div>
+                <div style="font-weight:500; font-size:11px; text-transform:uppercase; margin-top:10px; letter-spacing: 2px; color: var(--primary-color);">Esquemas de Inversión</div>
                 <div class="btn-grid">
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0, 0.7, 0, 'Plan 30% / 70%')">30% Enganche<br>70% Entrega</button>
                     <button class="btn-pago" onclick="runCalc(this, 0.3, 0.4, 0.3, 0.04, 'Plan 30/40/30')">30% Eng / 40% Obra<br>30% Ent (4% Desc)</button>
@@ -383,22 +464,24 @@
                     <button class="btn-pago" onclick="runCalc(this, 0.8, 0, 0.2, 0.12, 'Plan 80/20')">80% Enganche<br>20% Ent (12% Desc)</button>
                 </div>
                 <div class="result-card" id="res-card">
-                    <div style="color:var(--secondary-color); font-size:20px; font-weight:500; margin-bottom:18px; font-family:'Playfair Display', serif;" id="res-plan-name"></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568;"><span>Precio de Lista:</span><span id="res-list"></span></div>
-                    <div id="row-desc" style="display:none; justify-content:space-between; margin-bottom:10px; color:#c53030; font-weight:500;"><span>Ahorro Directo:</span><span id="res-desc-val"></span></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568;"><span>Enganche Inicial:</span><span id="res-down"></span></div>
+                    <div style="color:var(--secondary-color); font-size:22px; font-weight:400; margin-bottom:20px; font-family:'Playfair Display', serif; letter-spacing: 0.5px;" id="res-plan-name"></div>
+                    <div class="res-row"><span>Precio de Lista:</span><span id="res-list"></span></div>
+                    <div id="row-desc" class="res-row" style="display:none; color:#c53030; font-weight:400;"><span>Ahorro Directo:</span><span id="res-desc-val" style="color:#c53030; font-weight:500;"></span></div>
+                    <div class="res-row"><span>Enganche Inicial:</span><span id="res-down"></span></div>
+                    
                     <div id="obra-block" class="obra-block" style="display:none;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: #4A5568;"><span>Pago en Obra:</span><span id="res-obra-total"></span></div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568; font-weight: 300; font-size: 13px;"><span>Estructura en Obra:</span><span id="res-obra-total" style="font-weight:400; color:var(--text-color);"></span></div>
                         <div style="display:flex; justify-content:space-between; align-items:center; color:var(--accent-blue);">
-                            <span style="font-size:12px; text-transform: uppercase; letter-spacing: 0.5px;" id="res-months-label">mensualidades:</span>
-                            <span style="font-weight:700; font-size:16px;" id="res-monthly-val"></span>
+                            <span style="font-size:11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 400;" id="res-months-label">mensualidades:</span>
+                            <span style="font-family:'Playfair Display', serif; font-weight: 400; font-size: 20px;" id="res-monthly-val"></span>
                         </div>
                     </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color: #4A5568;"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
-                    <div style="border-top:1px solid var(--primary-color); padding-top:15px; margin-top:15px; font-weight:500; font-size:18px; display:flex; justify-content:space-between; color: var(--primary-color);"><span>Costo Final:</span><span id="res-total"></span></div>
-                    <div style="font-size:11px; color:#718096; font-style:italic; margin-top:15px;" id="res-note"></div>
+                    
+                    <div class="res-row"><span>Saldo a la Entrega:</span><span id="res-delivery"></span></div>
+                    <div style="border-top:1px solid var(--border-light); padding-top:20px; margin-top:20px; font-weight:400; font-size:22px; display:flex; justify-content:space-between; color: var(--primary-color); font-family:'Playfair Display', serif;"><span>Inversión Final:</span><span id="res-total" style="color: var(--primary-color); font-weight: 400;"></span></div>
+                    <div style="font-size:11px; color:#718096; font-style:italic; margin-top:20px; letter-spacing: 0.3px;" id="res-note"></div>
                 </div>
-                <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Capturar Ficha</button>
+                <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Exportar Ficha Comercial</button>
             </div>
         </div>
     </div>
@@ -409,7 +492,6 @@
         let touchstartX = 0, touchendX = 0;
         let activeSort = 'none';
 
-        // Helper de optimización para parsing numérico de strings financieros
         function parsePrice(pStr) {
             return parseFloat(pStr.replace(/[^0-9.]/g, '')) || 0;
         }
@@ -445,26 +527,58 @@
             }
         }
 
+        // Construcción limpia de las 3 columnas interactivas
         function updateStats() {
             const availA = inventory.filter(i => i.t === 'A').length, availB = inventory.filter(i => i.t === 'B').length;
             const soldA = 190 - availA, soldB = 190 - availB;
+
             document.getElementById('stats-bar').innerHTML = `
-                <span class="stats-main">Tablero de Disponibilidad Nautica</span>
-                <div class="stats-grid">
-                    <div class="stat-item">Ventas Torre A: ${soldA} (${((soldA/190)*100).toFixed(1)}%)</div>
-                    <div class="stat-item">Ventas Torre B: ${soldB} (${((soldB/190)*100).toFixed(1)}%)</div>
-                    <div class="stat-item stat-highlight">Disponibles: ${inventory.length} de 380</div>
+                <div class="dashboard-container">
+                    <span class="stats-main">Tablero de Control & Disponibilidad</span>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-item" id="dash-torre-a" onclick="dashboardFilter('torre', 'A')">
+                            <div class="dashboard-value">${soldA} <span style="font-size:13px; color:#718096; font-weight:300;">(${((soldA/190)*100).toFixed(0)}%)</span></div>
+                            <div class="dashboard-label">Torre A Comercializada</div>
+                        </div>
+                        <div class="dashboard-item" id="dash-torre-b" onclick="dashboardFilter('torre', 'B')">
+                            <div class="dashboard-value">${soldB} <span style="font-size:13px; color:#718096; font-weight:300;">(${((soldB/190)*100).toFixed(0)}%)</span></div>
+                            <div class="dashboard-label">Torre B Comercializada</div>
+                        </div>
+                        <div class="dashboard-item dashboard-highlight" id="dash-reset" onclick="dashboardFilter('reset', '')">
+                            <div class="dashboard-value">${inventory.length}</div>
+                            <div class="dashboard-label">Unidades disponibles</div>
+                        </div>
+                    </div>
                 </div>`;
+        }
+
+        function dashboardFilter(type, val) {
+            if (type === 'torre') {
+                document.getElementById('f-torre').value = val;
+            } else if (type === 'reset') {
+                document.getElementById('f-torre').value = 'all';
+                document.getElementById('f-recamaras').value = 'all';
+                document.getElementById('f-vista').value = 'all';
+                
+                const slider = document.getElementById('f-precio');
+                slider.value = slider.max;
+                document.getElementById('price-display').innerText = fmt(slider.max);
+                
+                activeSort = 'none';
+                document.getElementById('sort-low').classList.remove('active');
+                document.getElementById('sort-high').classList.remove('active');
+            }
+            applyFiltersAndSort();
         }
 
         function renderCatalog(data) {
             const grid = document.getElementById('catalog');
             grid.innerHTML = data.map(i => `
                 <div class="card" onclick="openModal('${i.u}')">
-                    <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>
+                    <div class="card-img-placeholder"><img src="${i.m.toUpperCase().replace(/\s+/g,'')}-1.jpg" style="width:90%; height:90%; object-fit:contain;" onerror="this.src='comodin.jpg'"></div>
                     <div class="card-content">
-                        <h3 class="card-title">Unidad ${i.u}</h3>
-                        <div class="card-details">Torre ${i.t} &nbsp;|&nbsp; ${i.area} m²</div>
+                        <h3 class="card-title">Residencia ${i.u}</h3>
+                        <div class="card-details">Torre ${i.t} &nbsp;&bull;&nbsp; ${i.area} m²</div>
                         <div class="card-price">${i.p}</div>
                     </div>
                 </div>`).join('');
@@ -511,6 +625,16 @@
                 filtered.sort((a, b) => parsePrice(b.p) - parsePrice(a.p));
             }
 
+            // Sincronización bidireccional inteligente de clases activas en el Dashboard
+            document.querySelectorAll('.dashboard-item').forEach(item => item.classList.remove('active'));
+            if (t === 'A') {
+                document.getElementById('dash-torre-a')?.classList.add('active');
+            } else if (t === 'B') {
+                document.getElementById('dash-torre-b')?.classList.add('active');
+            } else if (t === 'all') {
+                document.getElementById('dash-reset')?.classList.add('active');
+            }
+
             renderCatalog(filtered);
         }
 
@@ -521,8 +645,8 @@
             const modelKey = item.m.toUpperCase().replace(/\s+/g,'');
             const carousel = document.getElementById('carousel-images');
 
-            document.getElementById('modal-title').innerText = `Unidad ${item.u}`;
-            document.getElementById('m-data').innerHTML = `<b>Torre ${item.t}</b> &nbsp;&bull;&nbsp; Modelo ${item.m}<br>Vista ${item.v}<br>Entrega ${item.t === 'A' ? 'Dic 2028' : 'Jul 2029'}<br><span style="color:var(--secondary-color); font-size: 18px; font-weight:500;">Precio ${item.p}</span>`;
+            document.getElementById('modal-title').innerText = `Residencia ${item.u}`;
+            document.getElementById('m-data').innerHTML = `<b>Torre ${item.t}</b> &nbsp;&bull;&nbsp; Arquitectura Modelo ${item.m}<br>Orientación de Vista: ${item.v}<br>Horizonte de Entrega: ${item.t === 'A' ? 'Diciembre 2028' : 'Julio 2029'}<br><br><span style="font-family:'Playfair Display'; color:var(--primary-color); font-size: 24px;">${item.p}</span>`;
             
             carousel.innerHTML = `<button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
             
@@ -535,7 +659,6 @@
             document.getElementById('unitModal').style.display = 'block';
         }
 
-        // Se eliminó el intervalo automático, ahora el movimiento es estrictamente controlado por el usuario
         function moveSlide(n) { 
             const s = document.querySelectorAll('.slide-img'), v = Array.from(s).filter(x => x.style.display !== 'none'); 
             if (v.length <= 1) return; 
@@ -552,9 +675,9 @@
             if(ds > 0) { document.getElementById('row-desc').style.display = 'flex'; document.getElementById('res-desc-val').innerHTML = `- ${fmt(curPrice * ds)} (${Math.round(ds * 100)}%)`; } else { document.getElementById('row-desc').style.display = 'none'; }
             document.getElementById('res-down').innerText = fmt(final * d);
             const ob = document.getElementById('obra-block');
-            if(c > 0) { ob.style.display = 'block'; document.getElementById('res-obra-total').innerText = fmt(final * c); document.getElementById('res-months-label').innerText = `${m} meses de:`; document.getElementById('res-monthly-val').innerText = fmt((final * c) / m); } else { ob.style.display = 'none'; }
+            if(c > 0) { ob.style.display = 'block'; document.getElementById('res-obra-total').innerText = fmt(final * c); document.getElementById('res-months-label').innerText = `${m} aportaciones de:`; document.getElementById('res-monthly-val').innerText = fmt((final * c) / m); } else { ob.style.display = 'none'; }
             document.getElementById('res-delivery').innerText = fmt(final * e); document.getElementById('res-total').innerText = fmt(final);
-            document.getElementById('res-note').innerText = `* Basado en entrega Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Jul 2029'}).`;
+            document.getElementById('res-note').innerText = `* Cotización preferencial vinculada a tiempos de obra para Torre ${curTorre} (${curTorre === 'A' ? 'Dic 2028' : 'Jul 2029'}).`;
             document.getElementById('res-card').style.display = 'block';
         }
 
