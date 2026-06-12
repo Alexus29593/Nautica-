@@ -324,7 +324,7 @@
             letter-spacing: 0.5px; 
         }
 
-        /* Botón Comparar en Tarjeta - Rediseño sutil no invasivo */
+        /* Botón Comparar en Tarjeta - Sutil */
         .btn-card-compare {
             background: transparent;
             border: none;
@@ -475,7 +475,6 @@
         }
         .close:hover { color: var(--secondary-color); }
         
-        /* Efecto Zoom Inmersivo controlado en Carrusel */
         .carousel-area { 
             flex: 1.3; 
             background-color: #FFFFFF !important; 
@@ -488,30 +487,6 @@
             padding: 20px;
             overflow: hidden; 
         }
-        
-        /* Botón Dedicado para Zoom de Imagen */
-        .btn-zoom-overlay {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid var(--border-light);
-            color: var(--primary-color);
-            font-family: var(--font-extended), sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 8px 14px;
-            cursor: pointer;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            z-index: 45;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .btn-zoom-overlay:hover, .btn-zoom-overlay.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
 
         .slide-img { 
             max-width: 95%; 
@@ -519,15 +494,28 @@
             display: none; 
             animation: fade 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
             object-fit: contain;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .slide-img.active { display: block; }
+        @keyframes fade { from {opacity: 0} to {opacity: 1} }
         
-        /* Clase de ejecución para el zoom controlado */
-        .slide-img.active.zoomed {
-            transform: scale(1.4) !important;
+        .nav-btn { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: transparent; 
+            color: var(--primary-color); 
+            border: none; 
+            padding: 30px 10px; 
+            cursor: pointer; 
+            font-size: 24px; 
+            z-index: 40; 
+            transition: 0.3s; 
+            font-weight: 300;
         }
-        
+        .nav-btn:hover { color: var(--secondary-color); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
         .info-area { flex: 1; padding: 50px; background: white; overflow-y: auto; }
         .btn-back-mobile { display: none; }
         
@@ -623,7 +611,6 @@
             .carousel-area { min-height: 320px; max-height: 320px; border-right: none; border-bottom: 1px solid var(--border-light); padding: 10px; background-color: #FFFFFF !important;} 
             .info-area { padding: 30px 20px; }
             
-            /* Botón de escape móvil embellecido */
             .btn-back-mobile {
                 display: inline-flex;
                 align-items: center;
@@ -680,11 +667,13 @@
     <div class="stats-bar" id="stats-bar"></div>
     <div class="catalog-grid" id="catalog"></div>
 
+    <!-- Barra de Control de Comparativa Flotante -->
     <div id="compare-dock" class="compare-dock">
         <div class="compare-dock-info" id="compare-count">0/3 seleccionadas</div>
         <button class="btn-trigger-compare" onclick="openCompareModal()">Comparar Unidades</button>
     </div>
 
+    <!-- Modal Detalle de Unidad -->
     <div id="unitModal" class="modal">
         <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -724,10 +713,11 @@
         </div>
     </div>
 
+    <!-- Modal Cuadro de Comparativa -->
     <div id="compareModal" class="modal">
         <div class="modal-content" id="compare-capture-wrapper" style="max-width: 1050px; flex-direction: column; padding: 40px; background: #FFFFFF;">
             <span class="close" id="btn-compare-close" onclick="closeCompareModal()">&times;</span>
-            <h2 id="compare-modal-title" style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px;">Cuadro Comparativo de Residencias</h2>
+            <h2 id="compare-modal-title" style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px;">Cuadro Compartivo de Residencias</h2>
             
             <div class="compare-scroller" id="compare-table-scroller">
                 <div id="compare-matrix" class="compare-matrix"></div>
@@ -962,6 +952,9 @@
 
             document.querySelectorAll('.compare-cell').forEach(c => c.style.backgroundColor = '#FFFFFF');
 
+            // Pequeña pausa asíncrona para estabilizar fuentes y renders antes de capturar
+            await new Promise(resolve => setTimeout(resolve, 100));
+
             const canvas = await html2canvas(wrapper, {
                 scale: 3, 
                 useCORS: true,
@@ -1047,14 +1040,8 @@
             document.getElementById('modal-title').innerText = `Residencia ${item.u}`;
             document.getElementById('m-data').innerHTML = `<b>Torre ${item.t}</b> &nbsp;&bull;&nbsp; Arquitectura Modelo ${item.m}<br>Orientación de Vista: ${item.v}<br>Horizonte de Entrega: ${item.t === 'A' ? 'Diciembre 2028' : 'Julio 2029'}<br><br><span style="font-family: var(--font-gilroy); font-weight: 500; color:var(--primary-color); font-size: 22px;">${item.p}</span>`;
             
-            // Inyección del botón de zoom exclusivo y controlado
-            carousel.innerHTML = `
-                <button class="btn-zoom-overlay" id="btn-zoom-toggle" onclick="toggleImageZoom(event)">🔍 Zoom</button>
-                <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
-                <img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'">
-                <img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'">
-                <img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'">
-                <button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
+            // Reestablecido a carrusel limpio sin botones de zoom o clases de escalado
+            carousel.innerHTML = `<button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button><img class="slide-img active" src="${modelKey}-1.jpg" onerror="this.src='comodin.jpg'"><img class="slide-img" src="${modelKey}-2.jpg" onerror="this.style.display='none'"><img class="slide-img" src="${modelKey}-3.jpg" onerror="this.style.display='none'"><button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>`;
             
             carousel.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
             carousel.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; if (touchendX < touchstartX - 50) moveSlide(1); if (touchendX > touchstartX + 50) moveSlide(-1); }, {passive: true});
@@ -1065,30 +1052,7 @@
             document.getElementById('unitModal').style.display = 'block';
         }
 
-        // Lógica de Zoom Controlado
-        function toggleImageZoom(event) {
-            event.stopPropagation();
-            const activeImg = document.querySelector('.slide-img.active');
-            const zoomBtn = document.getElementById('btn-zoom-toggle');
-            
-            if (activeImg) {
-                activeImg.classList.toggle('zoomed');
-                zoomBtn.classList.toggle('active');
-                zoomBtn.innerText = activeImg.classList.contains('zoomed') ? '🔍 Alejar' : '🔍 Zoom';
-            }
-        }
-
-        function resetZoomState() {
-            document.querySelectorAll('.slide-img').forEach(img => img.classList.remove('zoomed'));
-            const zoomBtn = document.getElementById('btn-zoom-toggle');
-            if (zoomBtn) {
-                zoomBtn.classList.remove('active');
-                zoomBtn.innerText = '🔍 Zoom';
-            }
-        }
-
         function moveSlide(n) { 
-            resetZoomState(); // Resetea zoom al cambiar de diapositiva
             const s = document.querySelectorAll('.slide-img'), v = Array.from(s).filter(x => x.style.display !== 'none'); 
             if (v.length <= 1) return; 
             v[slideIdx].classList.remove('active'); 
@@ -1110,21 +1074,20 @@
             document.getElementById('res-card').style.display = 'block';
         }
 
+        // Motor de captura corregido con retardo asíncrono para garantizar el render de la primera imagen al 100%
         async function generarCaptura() {
-            resetZoomState(); // Resetea zoom obligatorio previo al render de captura
             const area = document.getElementById('capture-area');
             const btn = document.getElementById('btn-screenshot');
             const cl = document.querySelector('.close');
             const nv = document.querySelectorAll('.nav-btn');
             const backBtn = document.querySelector('.btn-back-mobile');
-            const zoomToggle = document.getElementById('btn-zoom-toggle');
             
             btn.style.display = 'none'; 
             cl.style.display = 'none'; 
             nv.forEach(n => n.style.display = 'none');
             if (backBtn) backBtn.style.display = 'none';
-            if (zoomToggle) zoomToggle.style.display = 'none';
 
+            // Forzado estricto de la primera imagen de plano arquitectónico antes del snapshot
             const s = document.querySelectorAll('.slide-img'), v = Array.from(s).filter(x => x.style.display !== 'none');
             v.forEach(img => img.classList.remove('active'));
             if(v[0]) v[0].classList.add('active');
@@ -1151,6 +1114,9 @@
             const carouselArea = document.getElementById('carousel-images');
             if (carouselArea) carouselArea.style.backgroundColor = '#FFFFFF';
 
+            // PAUSA DE REFLOW (150ms): Evita imágenes en blanco, desvanecidas o desplazamientos de cajas
+            await new Promise(resolve => setTimeout(resolve, 150));
+
             const canvas = await html2canvas(area, { 
                 scale: 3, 
                 useCORS: true, 
@@ -1167,6 +1133,7 @@
             link.href = canvas.toDataURL('image/png', 1.0); 
             link.click();
             
+            // Reestablecer a la imagen en la que el usuario se encontraba navegando originalmente
             v.forEach(img => img.classList.remove('active'));
             if(v[slideIdx]) v[slideIdx].classList.add('active');
 
@@ -1188,11 +1155,10 @@
             cl.style.display = 'block'; 
             nv.forEach(n => n.style.display = 'block');
             if (backBtn) backBtn.style.display = 'inline-flex';
-            if (zoomToggle) zoomToggle.style.display = 'block';
         }
 
         function fmt(n) { return '$ ' + Math.round(n).toLocaleString('es-MX'); }
-        function closeModal() { resetZoomState(); document.getElementById('unitModal').style.display = 'none'; }
+        function closeModal() { document.getElementById('unitModal').style.display = 'none'; }
         
         document.querySelectorAll('select').forEach(s => s.addEventListener('change', applyFiltersAndSort));
 
@@ -1201,7 +1167,6 @@
             if (e.target === document.getElementById('unitModal')) closeModal(); 
             if (e.target === document.getElementById('compareModal')) closeCompareModal();
             
-            // Si hace clic en la zona vacía del fondo del catálogo, vacía las unidades seleccionadas
             if (e.target === document.body || e.target.classList.contains('catalog-grid') || e.target.classList.contains('stats-bar')) {
                 if (selectedForCompare.length > 0) {
                     selectedForCompare = [];
