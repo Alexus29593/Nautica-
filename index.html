@@ -149,7 +149,7 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique Corregido (Centrado de Texto para image_d0d638.png) */
+        /* Ordenamiento Tipo Boutique Corregido */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
@@ -165,7 +165,7 @@
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: center; /* Alineación central perfecta sobre la línea */
+            text-align: center; 
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -657,8 +657,9 @@
             <input type="range" id="f-precio" class="price-range">
         </div>
 
+        <!-- Etiqueta forzada dinámicamente con text-align: center para image_d07803.png -->
         <div class="filter-group">
-            <label>Ordenar Por Precio</label>
+            <label style="text-align: center;">Ordenar Por Precio</label>
             <div class="sort-container">
                 <button class="btn-sort" id="sort-low" onclick="toggleSort('low')">Menor</button>
                 <button class="btn-sort" id="sort-high" onclick="toggleSort('high')">Mayor</button>
