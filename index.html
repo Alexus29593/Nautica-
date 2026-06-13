@@ -149,7 +149,7 @@
             margin-top: 15px; 
         }
         
-        /* Ordenamiento Tipo Boutique */
+        /* Ordenamiento Tipo Boutique Corregido (Centrado de Texto para image_d0d638.png) */
         .sort-container { display: flex; gap: 15px; width: 100%; }
         .btn-sort { 
             flex: 1; 
@@ -165,7 +165,7 @@
             transition: all 0.3s ease; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: left;
+            text-align: center; /* Alineación central perfecta sobre la línea */
         }
         .btn-sort:hover, .btn-sort.active { 
             color: var(--secondary-color);
@@ -334,7 +334,6 @@
             letter-spacing: 0.5px; 
         }
 
-        /* Botón Comparar en Tarjeta - Sutil */
         .btn-card-compare {
             background: transparent;
             border: none;
@@ -358,7 +357,6 @@
             font-weight: 500;
         }
 
-        /* Barra de Control de Comparativa Flotante (Compare Dock) */
         .compare-dock {
             position: fixed;
             bottom: 30px;
@@ -403,7 +401,6 @@
             color: var(--primary-color);
         }
 
-        /* Lienzo Reticular del Cuadro de Comparativa side-by-side */
         .compare-scroller {
             width: 100%;
             overflow-x: auto;
@@ -416,13 +413,6 @@
             width: 100%;
             min-width: 650px;
             background: #FFFFFF;
-        }
-        .compare-row {
-            display: grid;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .compare-row:last-child {
-            border-bottom: none;
         }
         .compare-cell {
             padding: 20px;
@@ -448,7 +438,6 @@
             letter-spacing: 1px;
         }
 
-        /* Modales */
         .modal { 
             display: none; 
             position: fixed; 
@@ -585,7 +574,6 @@
         
         .obra-block { background: var(--obra-bg); padding: 20px; border-radius: 0px; margin: 20px 0; border-left: 2px solid var(--secondary-color); }
 
-        /* Adaptación móvil estricta */
         @media (max-width: 900px) { 
             header { padding: 70px 20px; }
             header h1 { font-size: 28px; }
@@ -681,11 +669,13 @@
     <div class="stats-bar" id="stats-bar"></div>
     <div class="catalog-grid" id="catalog"></div>
 
+    <!-- Barra de Control de Comparativa Flotante -->
     <div id="compare-dock" class="compare-dock">
         <div class="compare-dock-info" id="compare-count">0/3 seleccionadas</div>
         <button class="btn-trigger-compare" onclick="openCompareModal()">Comparar Unidades</button>
     </div>
 
+    <!-- Modal Detalle de Unidad -->
     <div id="unitModal" class="modal">
         <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -725,6 +715,7 @@
         </div>
     </div>
 
+    <!-- Modal Cuadro de Comparativa -->
     <div id="compareModal" class="modal">
         <div class="modal-content" id="compare-capture-wrapper" style="max-width: 1050px; flex-direction: column; padding: 40px; background: #FFFFFF;">
             <span class="close" id="btn-compare-close" onclick="closeCompareModal()">&times;</span>
@@ -824,7 +815,7 @@
             if (type === 'torre') {
                 document.getElementById('f-torre').value = val;
             } else if (type === 'reset') {
-                document.getElementById('f-buscar').value = ''; // Limpia el input al resetear
+                document.getElementById('f-buscar').value = ''; 
                 document.getElementById('f-torre').value = 'all';
                 document.getElementById('f-recamaras').value = 'all';
                 document.getElementById('f-vista').value = 'all';
@@ -887,6 +878,7 @@
                 dock.style.display = 'flex';
                 countText.innerText = `${selectedForCompare.length}/3 Unidades seleccionadas`;
             } else {
+                dock.style.none;
                 dock.style.display = 'none';
             }
         }
@@ -1023,7 +1015,7 @@
                        (r === 'all' || i.r === r) && 
                        (v === 'all' || i.v.toLowerCase().includes(v)) &&
                        (itemPrice <= maxPriceSelected) &&
-                       matchesSearch; // Inyección de coincidencia por coincidencia de texto
+                       matchesSearch;
             });
 
             if (activeSort === 'low') {
@@ -1170,7 +1162,7 @@
         function closeModal() { document.getElementById('unitModal').style.display = 'none'; }
         
         document.querySelectorAll('select').forEach(s => s.addEventListener('change', applyFiltersAndSort));
-        document.getElementById('f-buscar').addEventListener('input', applyFiltersAndSort); // Listener para el campo de entrada
+        document.getElementById('f-buscar').addEventListener('input', applyFiltersAndSort);
 
         /* Cierre de modales y deselección automatizada de comparativa al hacer clic al vacío */
         window.addEventListener('click', e => { 
