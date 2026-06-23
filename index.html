@@ -100,7 +100,7 @@
         }
         
         /* Menus Desplegables e Inputs Estilo Liquid Glass */
-        .filter-group select, .filter-group input[type="text"] { 
+        .filter-group select, .filter-group input[type="text"], .compare-plan-select { 
             padding: 12px 30px 12px 0px; 
             border: none;
             border-bottom: 2px solid rgba(197, 168, 128, 0.4); 
@@ -118,21 +118,20 @@
             appearance: none;
             text-align: left;      
             text-align-last: left; 
-        }
-        .filter-group select {
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230A192F' d='M0 0l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
             background-position: right 4px center; 
         }
         .filter-group input[type="text"] {
             cursor: text;
+            background-image: none;
         }
         .filter-group input[type="text"]::placeholder {
             color: #A0AEC0;
             font-weight: 300;
         }
         .filter-group select:focus, .filter-group select:hover,
-        .filter-group input[type="text"]:focus, .filter-group input[type="text"]:hover {
+        .filter-group input[type="text"]:focus, .filter-group input[type="text"]:hover, .compare-plan-select:focus {
             border-color: var(--secondary-color);
             background: rgba(255, 255, 255, 0.4);
             box-shadow: 0 10px 25px rgba(10, 25, 47, 0.01);
@@ -411,11 +410,11 @@
         .compare-matrix {
             display: grid;
             width: 100%;
-            min-width: 650px;
+            min-width: 700px;
             background: #FFFFFF;
         }
         .compare-cell {
-            padding: 20px;
+            padding: 18px;
             font-size: 14px;
             color: #4A5568;
             display: flex;
@@ -436,6 +435,19 @@
             color: var(--primary-color);
             background: var(--obra-bg);
             letter-spacing: 1px;
+        }
+        
+        .compare-section-banner {
+            grid-column: 1 / -1;
+            background: var(--primary-color);
+            color: white;
+            font-family: var(--font-extended), sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 12px 20px;
+            text-align: left;
         }
 
         .modal { 
@@ -657,7 +669,6 @@
             <input type="range" id="f-precio" class="price-range">
         </div>
 
-        <!-- Etiqueta forzada dinámicamente con text-align: center para image_d07803.png -->
         <div class="filter-group">
             <label style="text-align: center;">Ordenar Por Precio</label>
             <div class="sort-container">
@@ -670,13 +681,11 @@
     <div class="stats-bar" id="stats-bar"></div>
     <div class="catalog-grid" id="catalog"></div>
 
-    <!-- Barra de Control de Comparativa Flotante -->
     <div id="compare-dock" class="compare-dock">
         <div class="compare-dock-info" id="compare-count">0/3 seleccionadas</div>
         <button class="btn-trigger-compare" onclick="openCompareModal()">Comparar Unidades</button>
     </div>
 
-    <!-- Modal Detalle de Unidad -->
     <div id="unitModal" class="modal">
         <div class="modal-content" id="capture-area">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -711,22 +720,34 @@
                     <div style="border-top:1px solid var(--border-light); padding-top:20px; margin-top:20px; font-weight:500; font-size:22px; display:flex; justify-content:space-between; color: var(--primary-color); font-family: var(--font-gilroy), sans-serif;"><span>Inversión Final:</span><span id="res-total" style="color: var(--primary-color); font-weight: 500;"></span></div>
                     <div style="font-size:11px; color:#718096; font-style:italic; margin-top:20px; letter-spacing: 0.3px;" id="res-note"></div>
                 </div>
-                <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Exportar Ficha Comercial</button>
+                
+                <button class="btn-capture" id="btn-screenshot" onclick="generarCaptura()">📸 Captura de esquema</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Cuadro de Comparativa -->
     <div id="compareModal" class="modal">
         <div class="modal-content" id="compare-capture-wrapper" style="max-width: 1050px; flex-direction: column; padding: 40px; background: #FFFFFF;">
             <span class="close" id="btn-compare-close" onclick="closeCompareModal()">&times;</span>
-            <h2 id="compare-modal-title" style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px;">Cuadro Comparativo de Residencias</h2>
+            
+            <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 25px; flex-wrap: wrap;" id="compare-header-row">
+                <h2 id="compare-modal-title" style="font-family: var(--font-extended), sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-color); margin: 0;">Cuadro Comparativo de Residencias</h2>
+                <div style="display: flex; flex-direction: column; min-width: 260px; margin-left: auto;" id="compare-plan-group">
+                    <select id="f-compare-plan" onchange="renderCompareMatrix()" class="compare-plan-select">
+                        <option value="none">Precio de Lista Base</option>
+                        <option value="plan1">Plan 30% / 70%</option>
+                        <option value="plan2">Plan 30/40/30 (4% Desc)</option>
+                        <option value="plan3">Plan 50/30/20 (7% Desc)</option>
+                        <option value="plan4">Plan 80/20 (12% Desc)</option>
+                    </select>
+                </div>
+            </div>
             
             <div class="compare-scroller" id="compare-table-scroller">
                 <div id="compare-matrix" class="compare-matrix"></div>
             </div>
             
-            <button class="btn-capture" id="btn-compare-screenshot" onclick="generarCapturaComparativa()" style="margin-top: 30px;">📸 Exportar Comparativa Comercial</button>
+            <button class="btn-capture" id="btn-compare-screenshot" onclick="generarCapturaComparativa()" style="margin-top: 30px;">📸 Captura de esquema</button>
         </div>
     </div>
 
@@ -879,19 +900,27 @@
                 dock.style.display = 'flex';
                 countText.innerText = `${selectedForCompare.length}/3 Unidades seleccionadas`;
             } else {
-                dock.style.none;
                 dock.style.display = 'none';
             }
         }
 
         function openCompareModal() {
+            document.getElementById('f-compare-plan').value = 'none'; 
+            renderCompareMatrix();
+            document.getElementById('compareModal').style.display = 'block';
+        }
+
+        function renderCompareMatrix() {
             const matrix = document.getElementById('compare-matrix');
+            const planSel = document.getElementById('f-compare-plan').value;
             const unitsData = selectedForCompare.map(uId => inventory.find(i => i.u === uId));
             
             let gridTemplate = `180px repeat(${selectedForCompare.length}, 1fr)`;
             matrix.style.gridTemplateColumns = gridTemplate;
 
-            let html = `<div class="compare-cell header-cell">Residencia</div>`;
+            let html = `<div class="compare-section-banner">Especificaciones de la Residencia</div>`;
+
+            html += `<div class="compare-cell header-cell">Residencia</div>`;
             unitsData.forEach(u => {
                 html += `<div class="compare-cell" style="font-family: var(--font-extended); font-weight:700; color: var(--primary-color); font-size:15px;">Unidad ${u.u}</div>`;
             });
@@ -924,11 +953,53 @@
 
             html += `<div class="compare-cell header-cell">Costo de Lista</div>`;
             unitsData.forEach(u => {
-                html += `<div class="compare-cell" style="color: var(--secondary-color); font-weight: 500; font-size:16px;">${u.p}</div>`;
+                html += `<div class="compare-cell" style="font-weight: 500;">${u.p}</div>`;
             });
 
+            if (planSel !== 'none') {
+                let d = 0, c = 0, e = 0, ds = 0;
+                if (planSel === 'plan1') { d = 0.3; c = 0; e = 0.7; ds = 0; }
+                if (planSel === 'plan2') { d = 0.3; c = 0.4; e = 0.3; ds = 0.04; }
+                if (planSel === 'plan3') { d = 0.5; c = 0.3; e = 0.2; ds = 0.07; }
+                if (planSel === 'plan4') { d = 0.8; c = 0; e = 0.2; ds = 0.12; }
+
+                html += `<div class="compare-section-banner">Estructura Financiera del Plan</div>`;
+
+                html += `<div class="compare-cell header-cell">Enganche Inicial</div>`;
+                unitsData.forEach(u => {
+                    const price = parsePrice(u.p);
+                    const final = price * (1 - ds);
+                    html += `<div class="compare-cell" style="font-weight: 500; color: var(--primary-color);">${fmt(final * d)}</div>`;
+                });
+
+                html += `<div class="compare-cell header-cell">Aportaciones Obra</div>`;
+                unitsData.forEach(u => {
+                    const price = parsePrice(u.p);
+                    const final = price * (1 - ds);
+                    if (c > 0) {
+                        const m = u.t === 'A' ? 31 : 43;
+                        html += `<div class="compare-cell" style="font-size:13px; line-height:1.4; font-weight: 500;">${fmt(final * c)}<br><span style="color:#718096; font-size:11px; font-weight: 300;">(${m} mens. de ${fmt((final * c)/m)})</span></div>`;
+                    } else {
+                        html += `<div class="compare-cell" style="color:#A0AEC0; font-weight:300;">0% (No aplica)</div>`;
+                    }
+                });
+
+                html += `<div class="compare-cell header-cell">Saldo a Entrega</div>`;
+                unitsData.forEach(u => {
+                    const price = parsePrice(u.p);
+                    const final = price * (1 - ds);
+                    html += `<div class="compare-cell" style="font-weight: 500;">${fmt(final * e)}</div>`;
+                });
+
+                html += `<div class="compare-cell header-cell" style="background: rgba(197, 168, 128, 0.08); font-weight:700;">Inversión Final</div>`;
+                unitsData.forEach(u => {
+                    const price = parsePrice(u.p);
+                    const final = price * (1 - ds);
+                    html += `<div class="compare-cell" style="color: var(--secondary-color); font-weight: 700; font-size:16px; background: rgba(197, 168, 128, 0.02);">${fmt(final)}</div>`;
+                });
+            }
+
             matrix.innerHTML = html;
-            document.getElementById('compareModal').style.display = 'block';
         }
 
         function closeCompareModal() {
@@ -942,9 +1013,11 @@
             
             const btnScreenshot = document.getElementById('btn-compare-screenshot');
             const btnClose = document.getElementById('btn-compare-close');
+            const planGroup = document.getElementById('compare-plan-group');
             
             btnScreenshot.style.display = 'none';
             btnClose.style.display = 'none';
+            if (planGroup) planGroup.style.display = 'none'; 
 
             const originalScrollerOverflow = scroller.style.overflowX;
             const originalWrapperWidth = wrapper.style.width;
@@ -979,6 +1052,7 @@
             wrapper.style.width = originalWrapperWidth;
             btnScreenshot.style.display = 'flex';
             btnClose.style.display = 'block';
+            if (planGroup) planGroup.style.display = 'flex';
         }
 
         function toggleSort(type) {
